@@ -484,13 +484,13 @@ body:before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
    by changing the url here (see design-review/redesign/이미지-프롬프트.md for prompts and sizes).
    ===================================================================== */
 :root{
-  --art-skyline:url('/art/skyline.svg');     /* night city along the bottom of the page, 2400x520, dark top edge */
-  --art-emblem:url('/art/emblem.svg');       /* shown where no character is selected (visitor, admin) */
-  --art-silhouette:url('/art/silhouette.svg'); /* behind the initial of characters without a picture */
+  --art-skyline:url('/art/skyline.webp');     /* night city along the bottom of the page, 2400x520, dark top edge */
+  --art-emblem:url('/art/emblem.webp');       /* shown where no character is selected (visitor, admin) */
+  --art-silhouette:url('/art/silhouette.webp'); /* behind the initial of characters without a picture */
 }
 /* the skyline is the top layer of the page backdrop (.afterhours-ui:after) */
-:is(#us,:root) .afterhours-ui:after{background:var(--art-skyline) center bottom/max(100%,1600px) auto no-repeat,radial-gradient(ellipse 60% 45% at 78% 0%,#1d7b7470,transparent 70%),radial-gradient(ellipse 50% 50% at 8% 30%,#47328060,transparent 70%),radial-gradient(ellipse 70% 40% at 50% 110%,#0f4a5a40,transparent 70%),var(--r-ink)}
-:is(#us,:root) .afterhours-ui .empty-portrait{font-size:0;color:transparent;background:radial-gradient(circle at 50% 45%,#7fe0cc26,transparent 60%),var(--art-emblem) center 42%/58% auto no-repeat,linear-gradient(#93c3d012 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,#93c3d012 1px,transparent 1px) 0 0/22px 22px,linear-gradient(165deg,#17262e,#0b111a)}
+:is(#us,:root) .afterhours-ui:after{background:linear-gradient(180deg,#070a1200,#070a1299 35%,#070a1270) center bottom/100% 480px no-repeat,var(--art-skyline) center bottom/max(100%,1600px) auto no-repeat,radial-gradient(ellipse 60% 45% at 78% 0%,#1d7b7470,transparent 70%),radial-gradient(ellipse 50% 50% at 8% 30%,#47328060,transparent 70%),radial-gradient(ellipse 70% 40% at 50% 110%,#0f4a5a40,transparent 70%),var(--r-ink)}
+:is(#us,:root) .afterhours-ui .empty-portrait{font-size:0;color:transparent;background:radial-gradient(circle at 50% 45%,#7fe0cc26,transparent 60%),var(--art-emblem) center 44%/76% auto no-repeat,linear-gradient(#93c3d012 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,#93c3d012 1px,transparent 1px) 0 0/22px 22px,linear-gradient(165deg,#17262e,#0b111a)}
 :is(#us,:root) .afterhours-ui .character-stage:has(.empty-portrait) .portrait-letter{font-size:22px;letter-spacing:.3em;font-family:var(--r-hud);opacity:.7}
 :is(#us,:root) :is(.portrait-plane .placeholder-avatar,.character-card .placeholder-avatar,dialog .public-profile>.placeholder-avatar,.thread-window-body .chat-message>.post-top .placeholder-avatar){
   background:var(--art-silhouette) center bottom/86% auto no-repeat,radial-gradient(circle at 50% 40%,hsl(var(--hue) 70% 55% / .35),transparent 55%),linear-gradient(hsl(var(--hue) 60% 70% / .07) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,hsl(var(--hue) 60% 70% / .07) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(165deg,hsl(var(--hue) 35% 16%),#0b111a)}
