@@ -1,0 +1,437 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbit&family=Chakra+Petch:wght@400;500;600;700&display=swap');
+/* US redesign.
+   Base layer (first half): the terminal theme fixes that carry the entry loader's ink-and-mint look through every
+   screen and remove the light-theme leftovers. Second half: the redesign layer (HUD masthead, transmission cards,
+   transmit console, ID-card rail, comm-link chat window, case-file scenes, ID badges).
+   Placement of the main regions is unchanged. `:is(#us,:root)` raises specificity without !important. */
+
+:root{
+  --t-bg:#0d1019;--t-panel:#121925;--t-panel-2:#162030;--t-field:#0b1018;
+  --t-line:#93c3d026;--t-line-2:#93c3d04d;--t-corner:#9fe3d466;
+  --t-mint:#c7eee5;--t-glow:#7fe0cc;--t-mid:#8fb8c8;
+  --t-text:#e2ecea;--t-text-2:#a9bcbc;--t-text-3:#7f9396;
+  --t-amber:#f2b866;--t-rose:#ef8fae;
+  --t-mono:ui-monospace,'SFMono-Regular',Menlo,Consolas,'Malgun Gothic',monospace;
+  --t-ease:cubic-bezier(.16,1,.3,1);
+  --t-brackets:
+    linear-gradient(var(--t-corner),var(--t-corner)) left top/12px 1px,
+    linear-gradient(var(--t-corner),var(--t-corner)) left top/1px 12px,
+    linear-gradient(var(--t-corner),var(--t-corner)) right top/12px 1px,
+    linear-gradient(var(--t-corner),var(--t-corner)) right top/1px 12px,
+    linear-gradient(var(--t-corner),var(--t-corner)) left bottom/12px 1px,
+    linear-gradient(var(--t-corner),var(--t-corner)) left bottom/1px 12px,
+    linear-gradient(var(--t-corner),var(--t-corner)) right bottom/12px 1px,
+    linear-gradient(var(--t-corner),var(--t-corner)) right bottom/1px 12px;
+}
+
+/* ---------- Base: night grid like the loader ---------- */
+html{background:var(--t-bg)}
+body{background:
+  radial-gradient(ellipse 70% 55% at 85% -5%,#2d5a6a40,transparent 70%),
+  radial-gradient(ellipse 55% 60% at -5% 40%,#1e4a4f33,transparent 70%),
+  linear-gradient(#93c3d00a 1px,transparent 1px) 0 0/48px 48px,
+  linear-gradient(90deg,#93c3d00a 1px,transparent 1px) 0 0/48px 48px,
+  var(--t-bg)}
+.afterhours-ui{color:var(--t-text);position:relative;isolation:isolate}
+.afterhours-ui ::selection{background:#7fe0cc40}
+
+/* ---------- Type: HUD labels in monospace ---------- */
+.afterhours-ui :is(.eyebrow,.nav-caption,.character-caption,.sidebar-foot,.section-kicker),
+:is(#us,:root) dialog .eyebrow{font-family:var(--t-mono);font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:var(--t-mid)}
+.afterhours-ui .eyebrow:before{content:'▸ ';color:var(--t-glow)}
+.afterhours-ui .page-heading h1{color:#f0f6f4;letter-spacing:-.01em}
+.afterhours-ui .nav-number{font-family:var(--t-mono)}
+.afterhours-ui .community-footer{font-family:var(--t-mono);color:var(--t-text-3)}
+.afterhours-ui :is(time,.composer-meta,.draft-hint,.report-count span,.scene-people){color:var(--t-text-3)}
+.afterhours-ui .server-post time,.afterhours-ui .notification-item time{font-variant-numeric:tabular-nums}
+.afterhours-ui .server-action time{font-family:var(--t-mono);font-size:.75rem}
+.afterhours-ui .post-top b,.afterhours-ui .server-scene header b{color:var(--t-text)}
+.afterhours-ui .post-body,.afterhours-ui .server-post .post-body,.afterhours-ui .server-action p{color:#dbe6e4}
+
+/* ---------- Panels: one surface with HUD corner brackets ---------- */
+.afterhours-ui :is(.server-post:not(.reply-post):not(.chat-message),.record-composer,.character-card,.empty-content,.onboarding,.status-box,.server-scene,.report-filters,.notice-article,.personnel-card),
+:is(#us,:root) dialog :is(.personnel-card){
+  background:var(--t-brackets),linear-gradient(180deg,var(--t-panel-2),var(--t-panel));
+  background-repeat:no-repeat;
+  border:1px solid var(--t-line);border-radius:2px;color:var(--t-text);
+  box-shadow:inset 0 1px 0 #ffffff08,0 16px 34px -26px #000;
+  transition:border-color .3s,box-shadow .3s,transform .35s var(--t-ease)}
+.afterhours-ui :is(.server-post:not(.reply-post):not(.chat-message),.character-card,.server-scene,.notice-article):hover{
+  --t-corner:#c7eee5cc;border-color:var(--t-line-2);box-shadow:inset 0 1px 0 #ffffff0d,0 18px 40px -24px #000,0 0 24px -12px #7fe0cc40}
+.afterhours-ui .record-composer:focus-within{--t-corner:#c7eee5;border-color:var(--t-line-2);box-shadow:0 0 0 3px #7fe0cc12,0 16px 34px -26px #000}
+.afterhours-ui .server-post>footer,.afterhours-ui .record-composer>footer,.afterhours-ui .server-scene>header,.afterhours-ui .server-action{border-color:var(--t-line)}
+.afterhours-ui .post-replies>.reply-post{background:none;border-top-color:var(--t-line)}
+.afterhours-ui .reply-context{color:var(--t-mid)}
+.afterhours-ui .reply-context:before{content:'ㄴ ';color:var(--t-text-3)}
+
+/* Light-theme leftovers */
+:is(#us,:root) .afterhours-ui :is(.report-help-panel,.report-help-inner,.report-help-copy){background:#0f1620;border-color:var(--t-line);color:var(--t-text-2)}
+:is(#us,:root) .afterhours-ui .report-help-copy :is(b,strong){color:var(--t-mint)}
+:is(#us,:root) .afterhours-ui .report-help-note{color:var(--t-text-3)}
+.afterhours-ui .server-scene details>summary,.afterhours-ui .server-scene details[open]>summary{background:#0f1620;border-color:var(--t-line);color:var(--t-mid)}
+.afterhours-ui .server-scene details>summary:hover{color:var(--t-mint)}
+:is(#us,:root) :is(.record-composer,.standard-form,.records-panel>header,.log-composer-new,.personnel-window,dialog) label{color:var(--t-mid)}
+
+/* ---------- Fields ---------- */
+:is(#us,:root) :is(input:not([type=checkbox],[type=radio],[type=file],[type=range]),textarea,select){
+  background-color:var(--t-field);color:var(--t-text);border:1px solid var(--t-line-2);border-radius:2px;color-scheme:dark;
+  transition:border-color .2s,box-shadow .2s,background-color .2s}
+:is(#us,:root) :is(input:not([type=checkbox],[type=radio],[type=file],[type=range]),textarea,select):focus{
+  outline:0;border-color:#9fe3d4b3;box-shadow:0 0 0 3px #7fe0cc1f;background-color:#0d141d}
+:is(#us,:root) ::placeholder{color:#6f8588}
+/* Fields that are meant to sit flush inside their container */
+:is(#us,:root) .search-label input,:is(#us,:root) .search-label input:focus,
+:is(#us,:root) .afterhours-ui .record-composer>textarea,:is(#us,:root) .afterhours-ui .record-composer>textarea:focus,
+:is(#us,:root) .thread-compose-dock .record-composer textarea,:is(#us,:root) .thread-compose-dock .record-composer textarea:focus,
+:is(#us,:root) .thread-compose-dock .composer-identity select{background-color:transparent;border-color:transparent;box-shadow:none}
+.afterhours-ui .search-label{background:var(--t-field);border-color:var(--t-line-2);border-radius:2px;transition:border-color .2s,box-shadow .2s}
+.afterhours-ui .search-label:focus-within{border-color:#9fe3d4b3;box-shadow:0 0 0 3px #7fe0cc1f}
+
+/* ---------- Buttons ---------- */
+:is(#us,:root) :is(.afterhours-ui button.primary,dialog .primary,dialog.personnel-window .primary,.thread-compose-dock .record-composer>footer button){
+  background:var(--t-mint);color:#0b1f1d;border:1px solid var(--t-mint);border-radius:2px;font-weight:600;
+  box-shadow:0 0 0 0 #7fe0cc00;transition:box-shadow .25s,background-color .2s,transform .2s var(--t-ease)}
+:is(#us,:root) :is(.afterhours-ui button.primary,dialog .primary,.thread-compose-dock .record-composer>footer button):hover{background:#dcf7f0;box-shadow:0 0 18px -2px #7fe0cc80}
+:is(#us,:root) :is(.afterhours-ui .outline,dialog .outline){color:var(--t-mint);background:#c7eee506;border:1px solid var(--t-line-2);border-radius:2px;transition:background-color .2s,border-color .2s,color .2s}
+:is(#us,:root) :is(.afterhours-ui .outline,dialog .outline):hover{background:#c7eee514;border-color:#9fe3d499;color:#f0fbf8}
+:is(#us,:root) .afterhours-ui .server-post>footer .outline,:is(#us,:root) .thread-window-body .chat-message>.thread-actions .outline{color:var(--t-text-2);border-color:transparent;background:none}
+:is(#us,:root) .afterhours-ui .server-post>footer .outline:hover,:is(#us,:root) .thread-window-body .chat-message>.thread-actions .outline:hover{color:var(--t-mint);background:#7fe0cc12}
+.afterhours-ui .quiet-button,.afterhours-ui .row-tools button{color:var(--t-text-3);transition:color .2s}
+.afterhours-ui .quiet-button:hover,.afterhours-ui .row-tools button:hover{color:var(--t-mint)}
+.afterhours-ui .refresh-page{border-color:var(--t-line-2);color:var(--t-mid);border-radius:2px;transition:color .2s,border-color .2s,transform .6s var(--t-ease)}
+.afterhours-ui .refresh-page:hover{color:var(--t-mint);border-color:#9fe3d499}
+:is(#us,:root) dialog .modal-header button,:is(#us,:root) dialog [data-do=dialog-close]{border-radius:2px}
+/* The way into the chat window should be easy to spot */
+.afterhours-ui [data-do^="thread-open:"]{color:var(--t-mint);border-color:#9fe3d480;background:#7fe0cc12}
+.afterhours-ui [data-do^="thread-open:"]:before{content:'▸ ';color:var(--t-glow)}
+.afterhours-ui [data-do^="thread-open:"]:hover{background:#7fe0cc24;box-shadow:0 0 16px -4px #7fe0cc80}
+
+/* ---------- Navigation ---------- */
+.afterhours-ui .nav-item{color:var(--t-text-2)}
+.afterhours-ui .nav-item span{color:inherit}
+.afterhours-ui .nav-item .nav-number{color:var(--t-text-3)}
+.afterhours-ui .nav-item:hover{color:var(--t-text)}
+.afterhours-ui .nav-item[aria-current=page],.afterhours-ui .nav-item[aria-current=page] .nav-number{color:var(--t-mint)}
+.afterhours-ui .nav-item[aria-current=page]:before{background:linear-gradient(100deg,#7fe0cc26,#7fe0cc05)}
+.afterhours-ui .nav-item[aria-current=page]:after{background:var(--t-glow);box-shadow:0 0 10px #7fe0ccaa}
+.afterhours-ui .masthead{border-bottom-color:var(--t-line)}
+.afterhours-ui .unread-badge,:is(#us,:root) .afterhours-ui .nav-item .unread-badge{background:var(--t-amber);color:#2a1a05}
+
+/* ---------- Avatars and covers: ID chips instead of pale plates ---------- */
+:is(#us,:root) .placeholder-avatar{background:linear-gradient(160deg,#1c3036,#132029);color:var(--t-mint);box-shadow:inset 0 0 0 1px #93c3d059;font-weight:500}
+:is(#us,:root) .empty-portrait{background:linear-gradient(#93c3d012 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,#93c3d012 1px,transparent 1px) 0 0/22px 22px,linear-gradient(165deg,#17262e,#0e141d);color:#c7eee5b3}
+.afterhours-ui .portrait-letter{color:#eaf6f3}
+
+/* ---------- Dialogs ---------- */
+:is(#us,:root) :is(dialog#dialog,dialog#personnel-window){background:linear-gradient(180deg,#141c28,#0f1520);color:var(--t-text);border:1px solid var(--t-line-2);border-radius:3px;box-shadow:0 30px 90px #000c,0 0 0 1px #7fe0cc0d}
+:is(#us,:root) dialog .modal-header{background:#121a26;border-bottom-color:var(--t-line)}
+:is(#us,:root) dialog .public-profile{color:var(--t-text)}
+:is(#us,:root) dialog .public-profile dt{color:var(--t-text-3);font-family:var(--t-mono);font-size:.75rem;letter-spacing:.06em}
+:is(#us,:root) dialog .public-profile dd{color:var(--t-text)}
+:is(#us,:root) dialog .public-profile hr,:is(#us,:root) dialog .public-profile dl{border-color:var(--t-line)}
+:is(#us,:root) dialog .status-box,:is(#us,:root) dialog .account-session{background:#0f1620;border-color:var(--t-line);color:var(--t-text-2)}
+dialog::backdrop{background:#04070cc4;backdrop-filter:blur(4px)}
+:is(#us,:root) .delete-confirm,:is(#us,:root) dialog .danger{border-radius:2px}
+
+/* ---------- RP chat window ---------- */
+:is(#us,:root) dialog#dialog.thread-window{background:
+  linear-gradient(#93c3d008 1px,transparent 1px) 0 0/36px 36px,
+  linear-gradient(90deg,#93c3d008 1px,transparent 1px) 0 0/36px 36px,
+  linear-gradient(180deg,#111925,#0c121b)}
+:is(#us,:root) .thread-window-footer{background:#0f1620;border-top-color:var(--t-line)}
+:is(#us,:root) .thread-window-body .chat-message{padding-top:16px!important}
+/* compact portrait chip with the name beside it, instead of a large card above every bubble */
+:is(#us,:root) .thread-window-body .chat-message>.post-top>.avatar-button{display:flex;align-items:center;gap:10px;width:auto;height:auto;min-width:0;overflow:visible;border:0;box-shadow:none;background:none}
+:is(#us,:root) .thread-window-body .chat-message>.post-top .avatar{width:40px;height:48px;min-width:40px;flex:none;border-radius:3px;box-shadow:inset 0 0 0 1px #93c3d040}
+:is(#us,:root) .thread-window-body .chat-message>.post-top .placeholder-avatar{font-size:18px}
+:is(#us,:root) .thread-window-body .chat-message>.post-top .chat-card-name{position:static;padding:0;background:none;text-shadow:none;font-size:14px;font-weight:600;color:var(--t-text)}
+:is(#us,:root) .thread-window-body .chat-out>.post-top>.avatar-button{flex-direction:row-reverse}
+:is(#us,:root) .thread-window-body .chat-message>.post-body{margin-top:8px;margin-left:50px;background:#16212e;border:1px solid #93c3d029;color:#e6eeec;box-shadow:0 8px 20px -14px #000}
+:is(#us,:root) .thread-window-body .chat-out>.post-body{margin-left:auto;margin-right:50px;background:linear-gradient(160deg,#173b38,#122d2c);border-color:#7fe0cc4d;color:#effaf7}
+:is(#us,:root) .thread-window-body .chat-message>:is(.chat-time,.reply-context,.thread-actions){margin-left:50px}
+:is(#us,:root) .thread-window-body .chat-out>:is(.chat-time,.reply-context,.thread-actions){margin-left:auto;margin-right:50px}
+:is(#us,:root) .thread-window-body .chat-message>.chat-time{color:var(--t-text-3);font-variant-numeric:tabular-nums}
+:is(#us,:root) .thread-window-body .chat-message>.thread-actions button{min-height:30px;color:var(--t-text-3)}
+:is(#us,:root) .thread-window-body .chat-message>.thread-actions button:hover{color:var(--t-mint);background:#7fe0cc12}
+@media(hover:hover){
+  :is(#us,:root) .thread-window-body .chat-message>.thread-actions{opacity:0;transition:opacity .2s}
+  :is(#us,:root) .thread-window-body .chat-message:hover>.thread-actions,:is(#us,:root) .thread-window-body .chat-message:focus-within>.thread-actions{opacity:1}
+}
+@media(max-width:480px){
+  :is(#us,:root) .thread-window-body .chat-message>.post-top>.avatar-button{width:auto;height:auto;min-width:0}
+  :is(#us,:root) .thread-window-body .chat-message>.post-top .avatar{width:34px;height:42px;min-width:34px}
+  :is(#us,:root) .thread-window-body .chat-message>.post-body{margin-left:44px;max-width:calc(100% - 52px)}
+  :is(#us,:root) .thread-window-body .chat-out>.post-body{margin-left:auto;margin-right:44px}
+  :is(#us,:root) .thread-window-body .chat-message>:is(.chat-time,.reply-context,.thread-actions){margin-left:44px}
+  :is(#us,:root) .thread-window-body .chat-out>:is(.chat-time,.reply-context,.thread-actions){margin-left:auto;margin-right:44px}
+}
+:is(#us,:root) .thread-compose-dock .record-composer{background:var(--t-field);border-color:var(--t-line-2);border-radius:3px}
+:is(#us,:root) .thread-compose-dock .record-composer:focus-within{border-color:#9fe3d4b3;box-shadow:0 0 0 3px #7fe0cc1a}
+
+/* ---------- Alerts ---------- */
+.afterhours-ui .notification-item{border-radius:2px;border-color:var(--t-line);background:linear-gradient(180deg,var(--t-panel-2),var(--t-panel));transition:border-color .25s,background-color .25s}
+.afterhours-ui .notification-item:hover{border-color:var(--t-line-2)}
+.afterhours-ui .notification-item.is-unread .notification-dot{background:var(--t-amber);box-shadow:0 0 8px #f2b86699}
+
+/* ---------- Motion (off with the OS setting or the site's 동작 줄이기) ---------- */
+@media (prefers-reduced-motion:no-preference){
+  :root:not([data-reduced-motion=true]) .afterhours-ui:before{content:'';position:fixed;left:0;right:0;top:-30vh;height:30vh;z-index:-1;pointer-events:none;background:linear-gradient(180deg,transparent,#7fe0cc0a 60%,transparent);animation:t-sweep 9s linear infinite}
+  :root:not([data-reduced-motion=true]) .afterhours-ui :is(.server-post:not(.reply-post):not(.chat-message),.character-card,.server-scene,.notice-article):hover{transform:translateY(-2px)}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .refresh-page:hover{transform:rotate(180deg)}
+  :root:not([data-reduced-motion=true]) :is(.afterhours-ui button.primary,dialog .primary):active{transform:scale(.96)}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .nav-item[aria-current=page]:after{animation:t-pulse 2.8s ease-in-out infinite}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .hud-led{animation:t-blink 2.4s steps(2,jump-none) infinite}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .records-panel>:is(.server-post,.server-scenes>.server-scene,.notice-article){animation:t-rise .5s var(--t-ease) both}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .records-panel>.server-post:nth-of-type(2){animation-delay:.04s}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .records-panel>.server-post:nth-of-type(3){animation-delay:.08s}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .records-panel>.server-post:nth-of-type(4){animation-delay:.12s}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .records-panel>.server-post:nth-of-type(n+5){animation-delay:.16s}
+  :root:not([data-reduced-motion=true]) .thread-window-body .chat-message>.post-body{animation:t-bubble .38s var(--t-ease) both;transform-origin:left top}
+  :root:not([data-reduced-motion=true]) .thread-window-body .chat-out>.post-body{transform-origin:right top}
+  :root:not([data-reduced-motion=true]) dialog#dialog[open]:not(.thread-window){animation:t-dialog .3s var(--t-ease)}
+  :root:not([data-reduced-motion=true]) .afterhours-ui [data-do^="thread-open:"]{animation:t-call 2.6s ease-in-out 3}
+}
+@keyframes t-sweep{to{transform:translateY(160vh)}}
+@keyframes t-pulse{0%,100%{box-shadow:0 0 6px #7fe0cc66}50%{box-shadow:0 0 14px #7fe0cccc}}
+@keyframes t-blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes t-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes t-bubble{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes t-dialog{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes t-call{0%,100%{box-shadow:0 0 0 0 #7fe0cc00}50%{box-shadow:0 0 0 4px #7fe0cc1f}}
+
+/* =====================================================================
+   REDESIGN LAYER
+   ===================================================================== */
+:root{
+  --r-ink:#070a12;--r-glass:#0f1622c7;--r-glass-2:#131d2bd9;
+  --r-hud:'Chakra Petch',ui-monospace,Menlo,monospace;--r-kr:'Orbit','Noto Sans KR',sans-serif;
+  --hue:172;--h-ink:hsl(var(--hue) 70% 72%);--h-soft:hsl(var(--hue) 60% 60% / .16);--h-line:hsl(var(--hue) 70% 70% / .42);
+}
+:is(#us,:root) *{--h-ink:hsl(var(--hue) 70% 74%);--h-soft:hsl(var(--hue) 60% 60% / .16);--h-line:hsl(var(--hue) 70% 70% / .45)}
+
+/* ---------- World: ink sky, aurora, grid that fades out, vignette ---------- */
+html{background:var(--r-ink)}
+body{background:var(--r-ink)}
+.afterhours-ui:after{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+  radial-gradient(ellipse 60% 45% at 78% 0%,#1d7b7470,transparent 70%),
+  radial-gradient(ellipse 50% 50% at 8% 30%,#47328060,transparent 70%),
+  radial-gradient(ellipse 70% 40% at 50% 110%,#0f4a5a40,transparent 70%),
+  var(--r-ink)}
+body:before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  linear-gradient(#9fe3d40d 1px,transparent 1px) 0 0/56px 56px,
+  linear-gradient(90deg,#9fe3d40d 1px,transparent 1px) 0 0/56px 56px;
+  -webkit-mask:radial-gradient(ellipse 80% 70% at 50% 30%,#000 30%,transparent 80%);mask:radial-gradient(ellipse 80% 70% at 50% 30%,#000 30%,transparent 80%)}
+
+/* ---------- HUD masthead ---------- */
+:is(#us,:root) .afterhours-ui .masthead{position:relative;z-index:30;width:100%;max-width:none;height:68px;padding:0 max(28px,calc((100% - 1164px)/2));
+  background:linear-gradient(180deg,#070a12f0,#0a0f19d9);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid #9fe3d426;box-shadow:0 1px 0 #7fe0cc14,0 18px 40px -30px #000}
+:is(#us,:root) .afterhours-ui .masthead:after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,#7fe0cc 30%,#b9a3ff 70%,transparent);opacity:.55}
+.afterhours-ui .wordmark{font-family:var(--r-hud);font-weight:700;font-size:22px;letter-spacing:.14em;color:#eef8f5;text-shadow:0 0 18px #7fe0cc40}
+.afterhours-ui .wordmark small{font-family:var(--r-hud);letter-spacing:.42em;color:#7fe0cc;font-size:9px;margin-top:6px}
+.afterhours-ui .wordmark .brand-mark{border-color:#7fe0cc;box-shadow:0 0 12px #7fe0cc66,inset 0 0 8px #7fe0cc33}
+.afterhours-ui .brand-mark:before{border-color:#b9a3ff80}
+.world-status{flex:1;min-width:0;max-width:520px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:7px 16px;border:1px solid #9fe3d42e;border-radius:999px;background:#0b121cb3;box-shadow:inset 0 0 20px #7fe0cc0d;overflow:hidden;white-space:nowrap}
+.world-status .hud-led{width:7px;height:7px;flex:none;border-radius:50%;background:#7fe0cc;box-shadow:0 0 10px #7fe0cc}
+.world-status-label{font:600 10px var(--r-hud);letter-spacing:.2em;color:#7fe0cc}
+.world-status b{font:400 12.5px var(--r-kr);color:#d9ece8;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.world-status time{margin-left:auto;font:500 12px var(--r-hud);letter-spacing:.08em;color:#8fb8c8;font-variant-numeric:tabular-nums}
+@media(max-width:1100px){.world-status-label{display:none}}
+@media(max-width:860px){.world-status{display:none}}
+:is(#us,:root) .afterhours-ui .header-alert{border:1px solid #9fe3d42e;border-radius:999px;padding:6px 12px;background:#0b121c99;transition:border-color .2s,box-shadow .2s}
+:is(#us,:root) .afterhours-ui .header-alert:hover{border-color:#7fe0cc80;box-shadow:0 0 16px -4px #7fe0cc80}
+:is(#us,:root) .afterhours-ui .account-button{border:1px solid #9fe3d42e;border-radius:999px;padding:4px 14px 4px 4px;background:#0b121c99}
+:is(#us,:root) .afterhours-ui .account-button .avatar{box-shadow:0 0 0 2px var(--h-line)}
+
+/* ---------- Navigation: lit control rows ---------- */
+.afterhours-ui .app-layout{margin-top:28px}
+.afterhours-ui .nav-caption{font-family:var(--r-hud)}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item{min-height:46px;padding:10px 12px;gap:11px;border-radius:12px;transform:none;color:#9fb3b5;font-size:14px;justify-content:flex-start}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item:before{clip-path:none;transform:none;border-radius:12px;background:linear-gradient(100deg,#7fe0cc24,#7fe0cc06 70%);border:1px solid #7fe0cc33}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item:hover:before{opacity:.45}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item[aria-current=page]{color:#effbf8}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item[aria-current=page]:after{left:-1px;top:12px;bottom:12px;width:3px;border-radius:3px}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item .nav-number{display:none}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item{white-space:nowrap}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item .unread-badge{margin-left:auto}
+:is(#us,:root) .afterhours-ui .sidebar .nav-item>span:not(.nav-number):not(.unread-badge){font:500 14px 'Noto Sans KR',sans-serif;color:inherit;letter-spacing:0}
+.nav-icon{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:9px;background:#9fe3d40f;border:1px solid #9fe3d41f;color:#8fb8c8;transition:all .25s}
+.nav-icon svg{width:16px;height:16px}
+.afterhours-ui .nav-item:hover .nav-icon{color:#c7eee5;border-color:#7fe0cc55}
+.afterhours-ui .nav-item[aria-current=page] .nav-icon{background:#7fe0cc;color:#06221e;border-color:#7fe0cc;box-shadow:0 0 16px -2px #7fe0ccaa}
+.afterhours-ui .mobile-more-panel .nav-icon{display:none}
+.afterhours-ui .nav-tools{border-top:1px solid #9fe3d41a;padding-top:18px;margin-top:28px}
+.afterhours-ui .sidebar-foot{font-family:var(--r-hud);color:#4f6467}
+
+/* ---------- Page heading ---------- */
+:is(#us,:root) .afterhours-ui .page-heading h1{font:400 34px/1.25 var(--r-kr);letter-spacing:.01em;background:linear-gradient(100deg,#f3fbf9 20%,#9fe3d4 60%,#b9a3ff);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px #7fe0cc30)}
+:is(#us,:root) .afterhours-ui .page-heading .eyebrow{font:500 11px var(--r-hud);letter-spacing:.3em;color:#7fe0cc;display:flex;align-items:center;gap:10px}
+:is(#us,:root) .afterhours-ui .page-heading .eyebrow:before{content:'';width:22px;height:1px;background:#7fe0cc;box-shadow:0 0 8px #7fe0cc}
+:is(#us,:root) .afterhours-ui .refresh-page{border-radius:12px;background:#0b121c99}
+
+/* ---------- Shared glass surface ---------- */
+:is(#us,:root) .afterhours-ui :is(.server-post:not(.reply-post):not(.chat-message),.record-composer,.character-card,.empty-content,.onboarding,.status-box,.server-scene,.report-filters,.notice-article,.notification-item){
+  background:linear-gradient(165deg,#141e2cee,#0d141fee);border:1px solid #9fe3d41f;border-radius:16px;
+  box-shadow:inset 0 1px 0 #ffffff0a,0 24px 50px -34px #000;backdrop-filter:blur(6px)}
+
+/* ---------- Timeline posts: transmission cards in the speaker's colour ---------- */
+.afterhours-ui .records-panel{counter-reset:log}
+:is(#us,:root) .afterhours-ui .server-post:not(.reply-post):not(.chat-message){position:relative;overflow:hidden;counter-increment:log;padding-left:26px;
+  background:radial-gradient(ellipse 60% 80% at 0% 0%,hsl(var(--hue) 70% 55% / .10),transparent 60%),linear-gradient(165deg,#141e2cee,#0d141fee)}
+:is(#us,:root) .afterhours-ui .server-post:not(.reply-post):not(.chat-message):before{content:'';position:absolute;left:0;top:18px;bottom:18px;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,var(--h-ink),hsl(var(--hue) 70% 60% / .1));box-shadow:0 0 14px var(--h-ink)}
+:is(#us,:root) .afterhours-ui .server-post:not(.reply-post):not(.chat-message):after{content:'LOG ' counter(log,decimal-leading-zero);position:absolute;left:26px;bottom:24px;font:500 10px var(--r-hud);letter-spacing:.24em;color:hsl(var(--hue) 50% 70% / .45);pointer-events:none}
+:is(#us,:root) .afterhours-ui .server-post:not(.reply-post):not(.chat-message):hover{border-color:var(--h-line);box-shadow:inset 0 1px 0 #ffffff0d,0 28px 50px -30px #000,0 0 30px -14px var(--h-ink)}
+:is(#us,:root) .afterhours-ui .server-post:not(.chat-message)>.post-top .avatar{width:46px;height:46px;min-width:46px;border-radius:14px;box-shadow:0 0 0 2px #0d141f,0 0 0 3.5px var(--h-line),0 6px 18px -6px var(--h-ink)}
+:is(#us,:root) .afterhours-ui .server-post:not(.chat-message)>.post-top .placeholder-avatar{background:linear-gradient(150deg,hsl(var(--hue) 45% 30%),hsl(var(--hue) 50% 14%));color:hsl(var(--hue) 80% 86%);font:400 19px var(--r-kr);text-shadow:0 0 12px hsl(var(--hue) 80% 60% / .7)}
+:is(#us,:root) .afterhours-ui .server-post:not(.chat-message)>.post-top b{font:400 16px var(--r-kr);color:var(--h-ink);letter-spacing:.02em}
+:is(#us,:root) .afterhours-ui .server-post:not(.chat-message)>.post-top time{font:500 11px var(--r-hud);letter-spacing:.06em;color:#6d8487}
+:is(#us,:root) .afterhours-ui .server-post:not(.reply-post):not(.chat-message)>.post-body{font-size:16.5px;line-height:1.9;color:#e6efed}
+:is(#us,:root) .afterhours-ui .server-post>footer{border-top:1px dashed #9fe3d41f;gap:6px}
+:is(#us,:root) .afterhours-ui .server-post>footer :is(.outline,.quiet-button){border:1px solid #9fe3d41f;border-radius:999px;padding:6px 14px;min-height:32px;background:#9fe3d408;color:#a9bcbc}
+:is(#us,:root) .afterhours-ui .server-post>footer :is(.outline,.quiet-button):hover{border-color:var(--h-line);color:#eefaf7;background:var(--h-soft)}
+:is(#us,:root) .afterhours-ui .server-post .row-tools button{border-radius:8px;padding:4px 8px}
+/* replies inside a card: a quiet indented thread in each speaker's colour */
+:is(#us,:root) .afterhours-ui .post-replies{border-left:1px solid #9fe3d426;margin-left:22px;padding-left:16px}
+:is(#us,:root) .afterhours-ui .post-replies>.reply-post{position:relative}
+:is(#us,:root) .afterhours-ui .post-replies>.reply-post:before{content:'';position:absolute;left:-20.5px;top:26px;width:8px;height:8px;border-radius:50%;background:var(--h-ink);box-shadow:0 0 10px var(--h-ink)}
+:is(#us,:root) .afterhours-ui .post-replies>.reply-post>.post-top .avatar{width:34px;height:34px;min-width:34px;border-radius:10px}
+/* the way into the chat window */
+:is(#us,:root) .afterhours-ui [data-do^="thread-open:"]{border-radius:999px;border:1px solid #7fe0cc80;background:linear-gradient(100deg,#7fe0cc2e,#b9a3ff1f);color:#e8fbf6;padding:8px 16px;font-weight:500}
+:is(#us,:root) .afterhours-ui [data-do^="thread-open:"]:before{content:'◉ ';color:#7fe0cc}
+
+/* ---------- Composer: transmit console ---------- */
+:is(#us,:root) .afterhours-ui :is(.reading-column>.record-composer,.report-panel>.record-composer){position:relative;padding-top:44px;border-color:#7fe0cc40;background:linear-gradient(165deg,#12202bf2,#0c141ff2)}
+:is(#us,:root) .afterhours-ui :is(.reading-column>.record-composer,.report-panel>.record-composer):before{content:'TRANSMIT  //  송신 대기';position:absolute;left:0;right:0;top:0;height:30px;padding:0 18px;display:flex;align-items:center;font:600 10px var(--r-hud);letter-spacing:.28em;color:#7fe0cc;border-bottom:1px solid #7fe0cc26;background:linear-gradient(90deg,#7fe0cc1a,transparent 70%);border-radius:16px 16px 0 0;white-space:pre}
+:is(#us,:root) .afterhours-ui :is(.reading-column>.record-composer,.report-panel>.record-composer):after{content:'';position:absolute;right:18px;top:11px;width:8px;height:8px;border-radius:50%;background:#f2b866;box-shadow:0 0 10px #f2b866}
+:is(#us,:root) .afterhours-ui :is(.reading-column>.record-composer,.report-panel>.record-composer):focus-within{border-color:#7fe0ccaa;box-shadow:0 0 0 4px #7fe0cc14,0 0 40px -10px #7fe0cc66}
+:is(#us,:root) .afterhours-ui :is(.reading-column>.record-composer,.report-panel>.record-composer):focus-within:before{content:'TRANSMIT  //  입력 중';color:#c7eee5}
+:is(#us,:root) .afterhours-ui :is(.reading-column>.record-composer,.report-panel>.record-composer):focus-within:after{background:#7fe0cc;box-shadow:0 0 12px #7fe0cc}
+:is(#us,:root) .afterhours-ui .record-composer .composer-identity .avatar{border-radius:10px;box-shadow:0 0 0 2px var(--h-line)}
+:is(#us,:root) .afterhours-ui .record-composer>textarea{font-size:16px;line-height:1.85}
+:is(#us,:root) :is(.afterhours-ui button.primary,dialog .primary,.thread-compose-dock .record-composer>footer button){border-radius:999px;padding-left:20px;padding-right:20px;border:0;
+  background:linear-gradient(100deg,#9ff0dc,#7fe0cc 50%,#a9c8ff);color:#05201c;font-weight:700;letter-spacing:.02em;box-shadow:0 6px 22px -8px #7fe0ccaa}
+:is(#us,:root) :is(.afterhours-ui button.primary,dialog .primary,.thread-compose-dock .record-composer>footer button):hover{background:linear-gradient(100deg,#c4fbec,#9ff0dc 50%,#c4d8ff);box-shadow:0 8px 28px -6px #7fe0cccc}
+:is(#us,:root) :is(.afterhours-ui .outline,dialog .outline){border-radius:999px}
+:is(#us,:root) :is(input:not([type=checkbox],[type=radio],[type=file],[type=range]),textarea,select){border-radius:10px}
+
+/* ---------- Right rail: one ID card ---------- */
+.afterhours-ui .character-caption{font-family:var(--r-hud);color:#7fe0cc}
+:is(#us,:root) .afterhours-ui .character-stage{padding:0}
+:is(#us,:root) .afterhours-ui .character-stage:before,:is(#us,:root) .afterhours-ui .character-stage:after{display:none}
+:is(#us,:root) .afterhours-ui .portrait-plane{transform:none;border-radius:18px 18px 0 0;border:1px solid #9fe3d433;border-bottom:0;overflow:hidden;position:relative;box-shadow:0 30px 60px -30px #000,0 0 40px -20px #7fe0cc66}
+:is(#us,:root) .afterhours-ui .portrait-plane:after{content:'';position:absolute;inset:0;pointer-events:none;background:
+  linear-gradient(115deg,transparent 35%,#ffffff1f 45%,#7fe0cc1a 50%,transparent 60%) 0 0/250% 100%,
+  repeating-linear-gradient(0deg,#ffffff06 0 1px,transparent 1px 3px),
+  linear-gradient(180deg,transparent 55%,#070a12e6)}
+:is(#us,:root) .afterhours-ui .portrait-letter{font-family:var(--r-kr);font-weight:400;z-index:2;text-shadow:0 0 24px #7fe0cc80}
+:is(#us,:root) .afterhours-ui .portrait-cross{color:#7fe0cc;z-index:2}
+:is(#us,:root) .afterhours-ui .character-info{border:1px solid #9fe3d433;border-top:1px dashed #9fe3d433;border-radius:0 0 18px 18px;background:linear-gradient(180deg,#0f1822f2,#0b111af2);padding:14px 14px 16px;box-shadow:0 30px 60px -30px #000}
+:is(#us,:root) .afterhours-ui .character-quote{border:0;padding:0 2px 12px;font:400 14px/1.6 var(--r-kr);color:#d6ebe6}
+:is(#us,:root) .afterhours-ui .character-quote:before{content:'“';color:#7fe0cc;margin-right:3px}
+:is(#us,:root) .afterhours-ui .terminal-shell{background:none;border:0;box-shadow:none;padding:0}
+:is(#us,:root) .afterhours-ui .terminal-bezel{font-family:var(--r-hud);color:#6d8487;padding:0 2px 8px;background:none;border:0}
+:is(#us,:root) .afterhours-ui .terminal-glass{border-radius:12px;border:1px solid #7fe0cc2e;background:repeating-linear-gradient(0deg,#7fe0cc05 0 1px,transparent 1px 4px),linear-gradient(160deg,#0d2a2a,#0a1a1f)}
+:is(#us,:root) .afterhours-ui .terminal-glass h2{font-family:var(--r-kr);font-weight:400;color:#e9fbf6;text-shadow:0 0 14px #7fe0cc66}
+:is(#us,:root) .afterhours-ui .character-link{border-radius:999px;margin-top:10px;border-color:#7fe0cc40;background:#7fe0cc0d;text-align:center}
+:is(#us,:root) .afterhours-ui .cast-caption{margin-top:22px;font-family:var(--r-hud);letter-spacing:.14em;font-size:11px;color:#7fe0cc}
+:is(#us,:root) .afterhours-ui .cast-switch{gap:8px}
+:is(#us,:root) .afterhours-ui .cast-button{border-radius:999px;border:1px solid #9fe3d41f;background:#0d141fcc;padding:4px 12px 4px 4px;transition:border-color .2s,background .2s,box-shadow .2s}
+:is(#us,:root) .afterhours-ui .cast-button .avatar{border-radius:50%;box-shadow:0 0 0 1.5px var(--h-line)}
+:is(#us,:root) .afterhours-ui .cast-button .placeholder-avatar{background:linear-gradient(150deg,hsl(var(--hue) 45% 30%),hsl(var(--hue) 50% 14%));color:hsl(var(--hue) 80% 86%)}
+:is(#us,:root) .afterhours-ui .cast-button:hover{border-color:var(--h-line)}
+:is(#us,:root) .afterhours-ui .cast-button[aria-pressed=true]{border-color:var(--h-ink);background:var(--h-soft);box-shadow:0 0 18px -6px var(--h-ink);color:#f1fbf8}
+
+/* ---------- Avatars everywhere get the speaker's colour ---------- */
+:is(#us,:root) .placeholder-avatar{background:linear-gradient(150deg,hsl(var(--hue) 45% 30%),hsl(var(--hue) 50% 14%));color:hsl(var(--hue) 80% 86%);font-family:var(--r-kr);font-weight:400;box-shadow:inset 0 0 0 1px hsl(var(--hue) 70% 70% / .35)}
+:is(#us,:root) :is(.portrait-plane .placeholder-avatar,.character-card .placeholder-avatar,dialog .public-profile>.placeholder-avatar,.thread-window-body .chat-message>.post-top .placeholder-avatar){
+  background:radial-gradient(circle at 50% 40%,hsl(var(--hue) 70% 55% / .35),transparent 55%),linear-gradient(hsl(var(--hue) 60% 70% / .07) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,hsl(var(--hue) 60% 70% / .07) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(165deg,hsl(var(--hue) 35% 16%),#0b111a);
+  color:hsl(var(--hue) 80% 85% / .8);text-shadow:0 0 26px hsl(var(--hue) 80% 60%)}
+
+/* ---------- Chat window: comm-link ---------- */
+:is(#us,:root) dialog#dialog.thread-window{border-radius:20px;border:1px solid #7fe0cc40;box-shadow:0 40px 120px #000e,0 0 60px -20px #7fe0cc55;background:
+  repeating-linear-gradient(0deg,#ffffff04 0 1px,transparent 1px 3px),
+  radial-gradient(ellipse 80% 40% at 50% 0%,#1d6b6a40,transparent 70%),
+  linear-gradient(180deg,#0e1622,#090e17)}
+:is(#us,:root) dialog.thread-window .modal-header{background:linear-gradient(90deg,#0f2a2a,#111a28 60%);border-bottom:1px solid #7fe0cc33;border-radius:20px 20px 0 0}
+:is(#us,:root) dialog.thread-window .thread-signal{font-family:var(--r-hud);color:#7fe0cc;letter-spacing:.16em}
+:is(#us,:root) .thread-window-body .chat-message>.post-top .avatar{border-radius:12px;box-shadow:0 0 0 2px #0b111a,0 0 0 3.5px var(--h-line),0 0 16px -4px var(--h-ink)}
+:is(#us,:root) .thread-window-body .chat-message>.post-top .chat-card-name{font:400 14px var(--r-kr);color:var(--h-ink)}
+:is(#us,:root) .thread-window-body .chat-message>.post-body{border-radius:4px 18px 18px 18px;border:1px solid hsl(var(--hue) 60% 65% / .28);background:linear-gradient(160deg,hsl(var(--hue) 35% 16% / .9),#111a26);font-size:15.5px}
+:is(#us,:root) .thread-window-body .chat-out>.post-body{border-radius:18px 4px 18px 18px;background:linear-gradient(160deg,hsl(var(--hue) 50% 26%),hsl(var(--hue) 45% 16%));border-color:hsl(var(--hue) 70% 70% / .5);box-shadow:0 10px 30px -16px hsl(var(--hue) 70% 50%)}
+:is(#us,:root) .thread-compose-dock .record-composer{border-radius:16px;background:#0a111bf2;border-color:#7fe0cc40}
+:is(#us,:root) .thread-window-footer{background:linear-gradient(180deg,#0b121c,#080d15);border-radius:0 0 20px 20px}
+:is(#us,:root) .thread-reply-target{font-family:var(--r-hud);letter-spacing:.1em;color:#7fe0cc}
+
+/* ---------- 보고로그: case files on a timeline ---------- */
+:is(#us,:root) .afterhours-ui .server-scene{overflow:hidden;padding:0}
+:is(#us,:root) .afterhours-ui .server-scene>header{padding:16px 20px;background:linear-gradient(90deg,#7fe0cc14,transparent 70%);border-bottom:1px solid #9fe3d41f}
+:is(#us,:root) .afterhours-ui .server-scene>header .eyebrow{font:500 10px var(--r-hud);letter-spacing:.24em;color:#7fe0cc}
+:is(#us,:root) .afterhours-ui .server-scene>header .eyebrow:before{content:'CASE · ';color:#5d7376}
+:is(#us,:root) .afterhours-ui .server-scene>header b{font:400 19px var(--r-kr);color:#f0faf7}
+:is(#us,:root) .afterhours-ui .server-scene>header small{font-family:var(--r-hud);letter-spacing:.06em;color:#6d8487;text-align:right}
+:is(#us,:root) .afterhours-ui .server-action{position:relative;margin:0 20px 0 26px;padding:12px 0 12px 14px;border:0;border-left:1px solid hsl(var(--hue) 60% 65% / .35)}
+:is(#us,:root) .afterhours-ui .server-action:first-of-type{margin-top:8px}
+:is(#us,:root) .afterhours-ui .server-action>span:first-child{color:var(--h-ink);text-shadow:0 0 10px var(--h-ink)}
+:is(#us,:root) .afterhours-ui .server-action b{color:var(--h-ink);font-weight:500}
+:is(#us,:root) .afterhours-ui .server-action time{color:#7fe0cc;font-family:var(--r-hud)}
+:is(#us,:root) .afterhours-ui .server-scene details{margin:8px 20px 18px}
+:is(#us,:root) .afterhours-ui .server-scene details>summary{border-radius:999px;border:1px dashed #7fe0cc55;background:#7fe0cc0a;color:#9fe3d4;text-align:center}
+
+/* ---------- 인물 목록: ID badges ---------- */
+:is(#us,:root) .afterhours-ui .character-card{position:relative;overflow:hidden;padding-top:0;border-color:hsl(var(--hue) 60% 65% / .22)}
+:is(#us,:root) .afterhours-ui .character-card:before{content:'';position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--h-ink),transparent);box-shadow:0 0 18px var(--h-ink)}
+:is(#us,:root) .afterhours-ui .character-card .portrait-button{border-radius:0 0 14px 14px;overflow:hidden;box-shadow:0 14px 30px -18px #000}
+:is(#us,:root) .afterhours-ui .character-card h2{font:400 20px var(--r-kr);color:var(--h-ink)}
+:is(#us,:root) .afterhours-ui .character-card small{font-family:var(--r-hud);letter-spacing:.08em;color:#7d9396}
+:is(#us,:root) .afterhours-ui .character-card:hover{border-color:var(--h-line);box-shadow:0 0 36px -14px var(--h-ink),0 24px 50px -30px #000}
+
+/* ---------- Dialogs ---------- */
+:is(#us,:root) :is(dialog#dialog,dialog#personnel-window){border-radius:20px;border-color:#7fe0cc33;background:radial-gradient(ellipse 80% 40% at 50% 0%,#1d6b6a2e,transparent 70%),linear-gradient(180deg,#111925,#0b1019)}
+:is(#us,:root) dialog .modal-header{border-radius:20px 20px 0 0;background:transparent}
+:is(#us,:root) dialog .modal-header h2{font-family:var(--r-kr);font-weight:400}
+:is(#us,:root) dialog .public-profile h2{font-family:var(--r-kr);font-weight:400;color:var(--h-ink)}
+
+/* ---------- Alerts / notices ---------- */
+:is(#us,:root) .afterhours-ui .notification-item.is-unread{border-color:#f2b86655;background:radial-gradient(ellipse 50% 100% at 0 50%,#f2b8661a,transparent),linear-gradient(165deg,#141e2cee,#0d141fee)}
+:is(#us,:root) .afterhours-ui .notice-article h2{font-family:var(--r-kr);font-weight:400}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion:no-preference){
+  :root:not([data-reduced-motion=true]) .afterhours-ui:after{animation:r-aurora 26s ease-in-out infinite alternate}
+  :root:not([data-reduced-motion=true]) .world-status .hud-led{animation:t-blink 2.4s steps(2,jump-none) infinite}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .masthead:after{background-size:200% 100%;animation:r-flow 8s linear infinite}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .portrait-plane:after{animation:r-holo 6s ease-in-out infinite}
+  :root:not([data-reduced-motion=true]) .afterhours-ui :is(.reading-column>.record-composer,.report-panel>.record-composer):after{animation:t-blink 1.6s steps(2,jump-none) infinite}
+  :root:not([data-reduced-motion=true]) .afterhours-ui :is(.reading-column>.record-composer,.report-panel>.record-composer):focus-within:after{animation:none}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .nav-item .nav-icon{transition:transform .3s var(--t-ease),background .25s,color .25s,box-shadow .25s}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .nav-item:hover .nav-icon{transform:translateY(-1px) scale(1.06)}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .server-post:not(.reply-post):not(.chat-message):before{animation:r-beam .9s var(--t-ease) both}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .server-action{animation:t-rise .45s var(--t-ease) both}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .character-card{animation:t-rise .5s var(--t-ease) both}
+  :root:not([data-reduced-motion=true]) .afterhours-ui .character-card:hover{transform:translateY(-4px)}
+  :root:not([data-reduced-motion=true]) dialog#dialog.thread-window[open]{animation:r-link .45s var(--t-ease)}
+}
+@keyframes r-aurora{0%{filter:hue-rotate(0deg);transform:scale(1)}100%{filter:hue-rotate(-25deg);transform:scale(1.08) translateY(-2%)}}
+@keyframes r-flow{to{background-position:-200% 0}}
+@keyframes r-holo{0%,100%{background-position:120% 0,0 0,0 0}50%{background-position:-20% 0,0 0,0 0}}
+@keyframes r-beam{from{transform:scaleY(0);opacity:0}to{transform:none;opacity:1}}
+@keyframes r-link{0%{opacity:0;transform:scaleY(.02) scaleX(.6);filter:brightness(3)}45%{opacity:1;transform:scaleY(.04) scaleX(1)}100%{transform:none;filter:none}}
+
+/* ---------- Mobile ---------- */
+@media(max-width:860px){
+  :is(#us,:root) .afterhours-ui .masthead{position:relative;height:auto;min-height:60px;padding:12px 16px}
+  :is(#us,:root) .afterhours-ui .wordmark{font-size:17px;letter-spacing:.1em}
+  :is(#us,:root) .afterhours-ui .terminal-mobile{border-radius:16px;border:1px solid #7fe0cc33;background:repeating-linear-gradient(0deg,#7fe0cc05 0 1px,transparent 1px 4px),linear-gradient(160deg,#0d2a2a,#0a1a1f)}
+  :is(#us,:root) .afterhours-ui .terminal-mobile .avatar{border-radius:10px;box-shadow:0 0 0 2px var(--h-line)}
+  :is(#us,:root) .afterhours-ui .mobile-more-panel{border-radius:16px;border-color:#7fe0cc33;background:#0d141ff2;backdrop-filter:blur(10px)}
+  :is(#us,:root) .afterhours-ui .mobile-more-panel .unread-badge{flex:none;width:auto;min-width:22px;margin-left:auto}
+  :is(#us,:root) .afterhours-ui .page-heading h1{font-size:28px}
+  :is(#us,:root) .afterhours-ui .server-post:not(.reply-post):not(.chat-message){padding-left:20px}
+  .afterhours-ui .nav-icon{display:none}
+}
+
+/* chat window: one flat conversation, no timeline indents or dividers */
+:is(#us,:root) .thread-window-body .post-replies{border:0;margin-left:0;padding-left:0}
+:is(#us,:root) .thread-window-body .post-replies>.reply-post:before{display:none}
+:is(#us,:root) .thread-window-body .server-post>footer{border-top:0}
+:is(#us,:root) dialog .modal-header button{border-radius:999px}

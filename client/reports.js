@@ -1,3 +1,4 @@
+import {hueOf} from './hue.js';
 export const emptyReportFilters=()=>({from:'',to:'',place:'',characterId:''});
 export function reportQuery(page,filters) {
  const params=new URLSearchParams({page:String(page)});
@@ -24,7 +25,7 @@ export function createReportsUI({state:S,escape:e,button,gate,form,help,canEdit,
   return `<nav class="report-pagination" aria-label="보고로그 페이지">${button('이전','report-page:'+(page-1),'outline',`${page<=1?'disabled':''} aria-label="이전 페이지"`)}<div class="report-page-numbers">${reportPageNumbers(page,total).map(n=>button(String(n),'report-page:'+n,'report-page',`aria-label="${n}페이지" ${n===page?'aria-current="page"':''}`)).join('')}</div>${button('다음','report-page:'+(page+1),'outline',`${page>=total?'disabled':''} aria-label="다음 페이지"`)}<small>${page} / ${total} 페이지</small></nav>`;
  }
  function sceneCard(scene) {
-  return `<article class="server-scene" data-record="${e(scene.id)}"><header><div><span class="eyebrow">${e(scene.day)}</span><b>${e(scene.place||'장소 미지정')}</b><p class="scene-people">${e([...new Set(scene.entries.map(a=>a.name))].join(' · '))}</p></div><small>${scene.entries.length}개 기록<br>마지막 행동 ${e(scene.entries.at(-1)?.at||'—')}</small></header>${scene.entries.map((a,i)=>`<div class="server-action"><span>${i?'ㄴ':'●'}</span><time>[${e(a.at)}]</time><p><b>${e(a.name)}</b> ${e(a.body)}</p>${canEdit(a)?`<div class="row-tools">${button('수정','edit-action:'+a.id)}${button('삭제','delete:action:'+a.id)}</div>`:''}</div>`).join('')}${S.user&&S.characters.some(c=>c.user_id===S.user.id)?`<details><summary>이 장면에 이어서 기록</summary>${form(scene)}</details>`:''}</article>`;
+  return `<article class="server-scene" data-record="${e(scene.id)}"><header><div><span class="eyebrow">${e(scene.day)}</span><b>${e(scene.place||'장소 미지정')}</b><p class="scene-people">${e([...new Set(scene.entries.map(a=>a.name))].join(' · '))}</p></div><small>${scene.entries.length}개 기록<br>마지막 행동 ${e(scene.entries.at(-1)?.at||'—')}</small></header>${scene.entries.map((a,i)=>`<div class="server-action" style="--hue:${hueOf(a.name)}"><span>${i?'ㄴ':'●'}</span><time>[${e(a.at)}]</time><p><b>${e(a.name)}</b> ${e(a.body)}</p>${canEdit(a)?`<div class="row-tools">${button('수정','edit-action:'+a.id)}${button('삭제','delete:action:'+a.id)}</div>`:''}</div>`).join('')}${S.user&&S.characters.some(c=>c.user_id===S.user.id)?`<details><summary>이 장면에 이어서 기록</summary>${form(scene)}</details>`:''}</article>`;
  }
  function render() {
   const selected=focus(),filtered=Object.values(filters()).some(Boolean);
