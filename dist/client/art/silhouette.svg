@@ -1,0 +1,2 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250" preserveAspectRatio="xMidYMax meet"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/></linearGradient></defs>
+<path fill="url(#g)" d="M100 40c22 0 38 18 38 42 0 18-8 33-20 40l-2 10c32 6 56 26 64 56l6 62H14l6-62c8-30 32-50 64-56l-2-10c-12-7-20-22-20-40 0-24 16-42 38-42z"/></svg>

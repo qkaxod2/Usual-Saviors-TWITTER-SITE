@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240"><g fill="none" stroke="#9fe3d4" stroke-width="1.5" opacity=".85">
+<path d="M100 20 L170 48 V120 C170 168 138 200 100 220 C62 200 30 168 30 120 V48 Z"/>
+<path d="M100 36 L156 58 V120 C156 158 131 184 100 202 C69 184 44 158 44 120 V58 Z" stroke-opacity=".4"/>
+<circle cx="100" cy="112" r="34" stroke-opacity=".7"/><circle cx="100" cy="112" r="4" fill="#9fe3d4"/>
+<path d="M100 66 V90 M100 134 V158 M54 112 H78 M122 112 H146" stroke-opacity=".7"/></g>
+<text x="100" y="236" text-anchor="middle" font-family="Chakra Petch, monospace" font-size="13" letter-spacing="5" fill="#9fe3d4" opacity=".7">USUAL SAVIORS</text></svg>
