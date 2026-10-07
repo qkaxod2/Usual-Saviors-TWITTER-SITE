@@ -1,0 +1,54 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+
+const persisted=new Map();
+function boot(blockStorage=false){
+ const nodes=new Map(),listeners={};
+ const el=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},hidden:false,style:{setProperty(){}},classList:{add(){},remove(){},toggle(){}},focus(){},setAttribute(){},scrollIntoView(){},querySelector(){return el('focus')},querySelectorAll(){return []}});return nodes.get(id)};
+ const context=vm.createContext({URLSearchParams,Date,console,location:{search:'?안=3',hash:'',pathname:'/Usual-Saviors.html'},history:{replaceState(){}},localStorage:{getItem:k=>{if(blockStorage)throw Error('blocked');return persisted.get(k)||null},setItem:(k,v)=>{if(blockStorage)throw Error('blocked');persisted.set(k,v)}},document:{getElementById:el,querySelector:el,querySelectorAll:()=>[],activeElement:el('focus'),addEventListener:(k,f)=>(listeners[k]??=[]).push(f)},window:{scrollTo(){},matchMedia:()=>({matches:false})},setTimeout:()=>1,clearTimeout(){}});
+ const run=s=>vm.runInContext(s,context);
+ for(const name of ['world.js','whippy-ui.js','creative-review.js','game-experience.js','main-community.js'])run(fs.readFileSync('dist/'+name,'utf8'));
+ const emit=(name,event)=>{for(const fn of listeners[name]||[])fn(event)};
+ const click=(kind,value)=>emit('click',{preventDefault(){},target:{closest:s=>s===`[data-${kind}]`?{dataset:{[kind]:value}}:null}});
+ const field=(id,value,event='input')=>emit(event,{target:{id,value}});
+ const submit=()=>emit('submit',{preventDefault(){},target:{closest:s=>s==='[data-log-form]'?{}:null}});
+ return {run,el,click,field,submit};
+}
+const a=boot();
+assert.equal(a.run('current'),19);
+assert(!a.el('app').innerHTML.includes('UI STUDIES'));
+assert(!a.el('app').innerHTML.includes('id="study"'));
+assert(!a.el('app').innerHTML.includes('revision-bar'));
+assert.equal((a.el('app').innerHTML.match(/data-hud=/g)||[]).length,3);
+a.run('choose(2)');assert.equal(a.run('current'),19);
+a.click('log','open');assert.equal(a.run('state().route'),'reports');
+assert(!a.el('app').innerHTML.includes('id="draft"'),'No 상황 기록 composer on reports');
+assert(a.el('app').innerHTML.includes('[14:03]'));assert(a.el('app').innerHTML.includes('복도 창가에 서 있음'));
+assert.equal(a.run('logScenes.length'),3);assert.equal(a.run('logScenes.reduce((n,s)=>n+s.entries.length,0)'),7);
+assert.equal((a.el('app').innerHTML.match(/class="action-log-row follow-row"/g)||[]).length,4);
+const publicBefore=a.run('state().posts.length'),dmBefore=a.run('state().dm.length');
+a.field('log-text','옥상에서 <script>주변을 살핌</script>');a.field('log-at','14:00');a.field('log-place','옥상');a.field('log-who','2','change');a.submit();
+assert.equal(a.run('logScenes.length'),4);assert.equal(a.run('state().posts.length'),publicBefore);assert.equal(a.run('state().dm.length'),dmBefore);
+assert(a.el('app').innerHTML.includes('&lt;script&gt;주변을 살핌&lt;/script&gt;'));
+const sceneId=a.run('logScenes.at(-1).id');
+a.click('log','continue:'+sceneId);a.field('log-who','1','change');a.field('log-at','14:01');a.field('log-text','옆에서 함께 내려다봄');a.submit();
+assert.equal(a.run('logScenes.at(-1).entries.length'),2);assert.equal(a.run('logScenes.length'),4);
+a.click('log','continue:'+sceneId);a.field('log-at','13:59');a.field('log-text','잘못된 시간');a.submit();assert.equal(a.run('logScenes.at(-1).entries.length'),2);assert(a.run('logUI.error').includes('이른 시각'));
+a.click('log','cancel');
+const rootId=a.run('logScenes.at(-1).entries[0].id'),childId=a.run('logScenes.at(-1).entries[1].id');
+a.click('log','edit:'+sceneId+':'+rootId);a.field('log-at','14:02');a.submit();assert(a.run('logUI.error').includes('늦게'));assert.equal(a.run('logScenes.at(-1).entries[0].at'),'14:00');
+a.click('log','edit:'+sceneId+':'+childId);a.field('log-at','14:04');a.field('log-text','말없이 옆에 서 있음');a.submit();assert.equal(a.run('logScenes.at(-1).entries[1].at'),'14:04');assert.equal(a.run('logScenes.at(-1).entries[1].text'),'말없이 옆에 서 있음');assert.equal(a.run('logScenes.at(-1).entries.length'),2);
+a.field('log-search','말없이');assert(a.el('log-list').innerHTML.includes('말없이 옆에 서 있음'));assert(!a.el('log-list').innerHTML.includes('운동장에서'));
+a.field('log-search','');a.field('log-place-filter','식당','change');assert(a.el('log-list').innerHTML.includes('식당에서 밥 먹음'));assert(!a.el('log-list').innerHTML.includes('복도 창가'));
+a.field('log-place-filter','all','change');a.click('log','fold:'+sceneId);assert(a.el('app').innerHTML.includes('후속 기록 1개 펼치기'));a.click('log','fold:'+sceneId);
+a.field('log-day','2026-01-01','change');assert(a.el('app').innerHTML.includes('아직 남긴 장면이 없습니다.'));
+a.field('log-text','별도 날짜의 기록');a.field('log-at','09:00');a.submit();assert.equal(a.run("logScenes.filter(s=>s.day==='2026-01-01').length"),1);
+const b=boot();assert.equal(b.run('logScenes.length'),5);assert(b.run("logScenes.some(s=>s.entries.some(e=>e.text==='말없이 옆에 서 있음'))"));assert.equal(b.run('storageOK'),true);
+const c=boot(true);c.click('log','open');assert(c.el('app').innerHTML.includes('현재 창에서만 보관'));c.field('log-text','저장 불가 상태에서도 기록');c.field('log-at','20:00');c.submit();assert.equal(c.run('logScenes.length'),4);assert.equal(c.run('storageOK'),false);
+for(const route of ['home','members','notifications','dm','bookmarks','world']){a.click('action','route:'+route);assert.equal(a.run('current'),19);assert(!a.el('app').innerHTML.includes('id="study"'));const ids=[...a.el('app').innerHTML.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size)}
+a.click('log','open');const ids=[...a.el('app').innerHTML.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size);assert.equal((a.el('app').innerHTML.match(/data-log-form=/g)||[]).length,1);
+const css=fs.readFileSync('dist/main-community.css','utf8');assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);
+fs.writeFileSync('validation/main-report.html',a.el('app').innerHTML);
+fs.writeFileSync('validation/main-result.json',JSON.stringify({mainLayout:20,designSwitcher:false,hud:['notice','members','report'],reportTests:['example grouped timestamps','new scene','continuation','edit in place','chronological validation','text escaping','search','place filter','date selection','fold','separation from public and 개별 메시지','persistence after reload','storage failure fallback'],routeChecks:7,browserVisualQA:false},null,2));
+console.log('PASS: main is layout 20 only; grouped action logs, create/continue/edit, chronological validation, filters, escaping, persistence and storage fallback; public/개별 메시지 separation. No browser visual QA.');

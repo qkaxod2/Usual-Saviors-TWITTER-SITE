@@ -1,0 +1,21 @@
+plugins { id 'com.android.application' }
+android {
+ namespace 'com.usualsaviors.app'
+ compileSdk 36
+ defaultConfig { applicationId 'com.usualsaviors.app'; minSdk 23; targetSdk 36; versionCode 3; versionName '1.0.2' }
+ signingConfigs {
+  release {
+   storeFile file(System.getenv('US_SIGNING_STORE') ?: '../../.local/android-signing.jks')
+   storePassword System.getenv('US_SIGNING_PASSWORD')
+   keyAlias 'usual-saviors'
+   keyPassword System.getenv('US_SIGNING_PASSWORD')
+  }
+ }
+ buildTypes { release { signingConfig signingConfigs.release; minifyEnabled false } }
+ testOptions { unitTests.includeAndroidResources = true }
+}
+dependencies {
+ implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.3'
+ testImplementation 'junit:junit:4.13.2'
+ testImplementation 'org.robolectric:robolectric:4.16.1'
+}

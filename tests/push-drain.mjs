@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {createECDH,randomBytes} from 'node:crypto';
+import {database} from '../scripts/db-adapter.mjs';
+import {drainPush} from '../server/push.js';
+const DB=database(),key=createECDH('prime256v1');key.generateKeys();let now=Date.now(),calls=0;
+const env={DB,PUSH_PUBLIC_KEY:key.getPublicKey().toString('base64url'),PUSH_PRIVATE_KEY:key.getPrivateKey().toString('base64url'),PUSH_NOW:()=>now,PUSH_SLEEP:async ms=>{now+=ms},PUSH_FETCH:async()=>{calls++;return {status:201}}};
+DB.native.prepare('INSERT INTO users VALUES(?,?,?,?,?,?,?)').run('a','a','a','unused','member','active',now);
+DB.native.prepare('INSERT INTO sessions VALUES(?,?,?)').run('session','a',now+86400000);
+DB.native.prepare('INSERT INTO push_subscriptions VALUES(?,?,?,?,?,?,?)').run('device','https://fcm.googleapis.com/fcm/send/test','a','session',key.getPublicKey().toString('base64url'),randomBytes(16).toString('base64url'),now);
+const enqueue=id=>DB.native.prepare('INSERT INTO notifications(id,user_id,type,title,body,route,created_at) VALUES(?,?,?,?,?,?,?)').run(id,'a','reply','title','body','home',now);
+for(let i=0;i<35;i++)enqueue('backlog'+i);
+await drainPush(env);assert.equal(calls,35,'one trigger drains more than the old eight-job limit');assert.equal(DB.native.prepare('SELECT count(*) n FROM push_deliveries WHERE delivered_at IS NULL').get().n,0);
+enqueue('retry');let retryCalls=0;env.PUSH_FETCH=async()=>({status:++retryCalls<3?503:201});await drainPush(env);assert.equal(retryCalls,3,'short transient failures retry without another request');
+assert.ok(DB.native.prepare("SELECT delivered_at FROM push_deliveries WHERE notification_id='retry'").get().delivered_at);
+enqueue('limited');let limited=0;env.PUSH_FETCH=async()=>{limited++;return {status:429,headers:new Headers({'retry-after':'120'})}};await drainPush(env);assert.equal(limited,1,'Retry-After prevents a retry storm');assert.ok(DB.native.prepare("SELECT lease_until FROM push_deliveries WHERE notification_id='limited'").get().lease_until>=now+120000);
+enqueue('invalid');let permanent=0;env.PUSH_FETCH=async()=>{permanent++;return {status:400}};await drainPush(env);assert.equal(permanent,1);assert.equal(DB.native.prepare("SELECT attempts FROM push_deliveries WHERE notification_id='invalid'").get().attempts,8);
+DB.native.close();console.log('Backlog draining, automatic short retries, Retry-After and permanent failure limits verified.');

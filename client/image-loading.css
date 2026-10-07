@@ -1,0 +1,33 @@
+/* Loading is confined to the existing image box. Its geometry and entrance remain intact. */
+.image-loading-anchor{position:relative!important}
+img.avatar[data-image-loading]{visibility:hidden}
+.image-loading-surface{
+ position:absolute;display:grid;place-items:center;overflow:hidden;pointer-events:none;
+ box-sizing:border-box;margin:0;padding:0;background:#202b37;color:#aebfc9;
+ isolation:isolate;
+}
+.image-loading-surface::before{
+ content:'';position:absolute;left:calc(50% - 7px);top:calc(50% - 7px);width:14px;height:14px;
+ box-sizing:border-box;border:1px solid #b7d2d126;border-top-color:#b7d2d1b3;border-radius:50%;
+ animation:image-loading-turn 1600ms linear infinite;
+}
+.image-loading-surface::after{
+ content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 20%,#bedbd90d 48%,#bedbd919 50%,transparent 80%);
+ animation:image-loading-sweep 2300ms ease-in-out infinite;
+}
+.image-loading-surface[data-large=true]::before{width:28px;height:28px;left:calc(50% - 14px);top:calc(50% - 28px)}
+.image-loading-surface .image-loading-label{display:none}
+.image-loading-surface[data-large=true] .image-loading-label{
+ display:block;position:absolute;top:calc(50% + 13px);left:12px;right:12px;
+ padding:0!important;margin:0!important;font-size:.8125rem!important;line-height:1.6;text-align:center;
+ color:#b2c4cd!important;white-space:normal!important;overflow-wrap:anywhere;
+}
+.image-loading-surface[data-state=error]::before{animation:none;border-color:#bbabba60;border-radius:2px;transform:rotate(45deg)}
+.image-loading-surface[data-state=error]::after{display:none}
+.image-loading-surface[data-visible=false]::before,.image-loading-surface[data-visible=false]::after{animation-play-state:paused}
+/* Mirror the portrait's existing final-half-turn mask without altering that animation. */
+.intro-playing .afterhours-ui .portrait-plane>.image-loading-surface{opacity:clamp(0,calc((var(--intro-progress) - .75)*4),1)}
+@keyframes image-loading-turn{to{transform:rotate(360deg)}}
+@keyframes image-loading-sweep{from{transform:translateX(-110%)}to{transform:translateX(110%)}}
+html[data-reduced-motion=true] .image-loading-surface::before,html[data-reduced-motion=true] .image-loading-surface::after{animation:none}
+@media(prefers-reduced-motion:reduce){.image-loading-surface::before,.image-loading-surface::after{animation:none}}

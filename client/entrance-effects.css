@@ -1,0 +1,118 @@
+/* Two full turns in 1.7 seconds, followed by the staggered terminal reveal. */
+.intro-playing .afterhours-ui .masthead {
+  animation: intro-fade 1100ms both;
+}
+.intro-playing .afterhours-ui :is(.nav-caption,.nav-tools,.sidebar-foot,.mobile-more) {
+  animation: intro-fade 1100ms 200ms both;
+}
+.intro-playing .afterhours-ui .page-heading,
+.intro-playing .afterhours-ui .character-stage {
+  animation: intro-fade 1000ms 100ms both;
+}
+.intro-playing .afterhours-ui .reading-column > :not(.page-heading):not(.terminal-mobile) {
+  animation: intro-rise 1300ms 350ms both;
+}
+.intro-playing .afterhours-ui .community-footer {
+  animation: intro-fade 1200ms 800ms both;
+}
+@keyframes intro-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@property --intro-progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+.intro-playing .afterhours-ui .portrait-plane {
+  animation: intro-portrait 1700ms ease-in-out both;
+  transform: perspective(1100px) rotateY(calc(-727deg + var(--portrait-x,0deg) + var(--intro-progress) * 720deg)) rotateX(var(--portrait-y,0deg)) rotate(-1.3deg);
+  transition: none;
+}
+/* The same eased progress drives rotation and reveal: hidden through 540 degrees. */
+.intro-playing .afterhours-ui .portrait-plane > .avatar,
+.intro-playing .afterhours-ui .portrait-plane > .empty-portrait,
+.intro-playing .afterhours-ui .portrait-letter {
+  opacity: clamp(0, calc((var(--intro-progress) - .75) * 4), 1);
+}
+.intro-playing .afterhours-ui .character-caption {
+  animation: intro-rise 1100ms 150ms both;
+}
+.intro-playing .afterhours-ui .portrait-letter {
+  animation: intro-portrait-title 650ms 1050ms both;
+}
+.intro-playing .afterhours-ui .character-quote {
+  animation: intro-rise 1300ms 1250ms both;
+}
+.intro-playing .afterhours-ui .terminal-shell {
+  animation: intro-terminal 1500ms 1500ms both;
+}
+.intro-playing .afterhours-ui .cast-caption,
+.intro-playing .afterhours-ui .cast-switch,
+.intro-playing .afterhours-ui .guest-character-note {
+  animation: intro-rise 1100ms 2100ms both;
+}
+.intro-playing .afterhours-ui .primary-nav > .nav-item {
+  animation: intro-menu 1400ms var(--intro-delay,100ms) both;
+}
+.intro-playing .afterhours-ui .primary-nav > .nav-item:nth-child(2) { --intro-delay: 230ms; }
+.intro-playing .afterhours-ui .primary-nav > .nav-item:nth-child(3) { --intro-delay: 360ms; }
+.intro-playing .afterhours-ui .primary-nav > .nav-item:nth-child(4) { --intro-delay: 490ms; }
+.intro-playing .afterhours-ui .primary-nav > .nav-item:nth-child(5) { --intro-delay: 620ms; }
+.intro-playing .afterhours-ui .primary-nav > .nav-item:nth-child(6) { --intro-delay: 750ms; }
+.intro-playing .afterhours-ui .primary-nav > .nav-item:nth-child(7) { --intro-delay: 880ms; }
+.intro-playing .afterhours-ui .terminal-glass:after {
+  animation: intro-scan 1700ms 1500ms linear both;
+}
+
+@keyframes intro-portrait {
+  0% {
+    --intro-progress: 0;
+    opacity: 0;
+  }
+  20% { opacity: 1; }
+  100% {
+    --intro-progress: 1;
+    opacity: 1;
+  }
+}
+@keyframes intro-portrait-title {
+  from { translate: 0 18px; }
+  to { translate: 0 0; }
+}
+@keyframes intro-rise {
+  from { opacity: 0; translate: 0 18px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes intro-menu {
+  from { opacity: 0; rotate: y 28deg; translate: -12px 0; }
+  to { opacity: 1; rotate: y 0deg; translate: 0 0; }
+}
+@keyframes intro-terminal {
+  from { opacity: 0; translate: 0 20px; rotate: x 12deg; }
+  to { opacity: 1; translate: 0 0; rotate: x 0deg; }
+}
+@keyframes intro-scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  18% { opacity: 1; }
+  75% { opacity: .8; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* The portrait is hidden here, so the compact terminal carries the entrance. */
+@media (max-width:850px) {
+  .intro-playing .afterhours-ui .terminal-mobile {
+    animation: intro-terminal 2300ms 400ms both;
+  }
+  .intro-playing .afterhours-ui .terminal-mobile:after {
+    animation: intro-scan 2000ms 1100ms linear both;
+  }
+  .intro-playing .afterhours-ui .page-heading > div {
+    animation: intro-rise 1600ms 150ms both;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .intro-playing .afterhours-ui *,
+  .intro-playing .afterhours-ui *:after { animation: none !important; }
+}

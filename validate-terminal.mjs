@@ -1,0 +1,45 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const persisted=new Map();
+function boot({blocked=false,reduced=false}={}){
+ const nodes=new Map(),listeners={},frames=new Map(),animations=[],openingResolvers=[];let now=0,serial=0;
+ const el=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},hidden:false,open:false,style:{setProperty(){}},classList:{add(){},remove(){},toggle(){}},focus(){this.focused=true},setAttribute(){},removeAttribute(){},scrollIntoView(){},querySelector(){return el('focus')},querySelectorAll(){return []},addEventListener(k,f){this[k]=f},showModal(){this.open=true},close(){this.open=false},getBoundingClientRect(){return id==='personnel-window'?{left:350,top:50,width:660,height:720}:{left:50,top:420,width:195,height:49}},animate(keyframes,options){animations.push({keyframes,options});return {finished:options.duration===600?new Promise(resolve=>openingResolvers.push(resolve)):Promise.resolve()}},getAnimations(){return []}});return nodes.get(id)};
+ const context=vm.createContext({URLSearchParams,Date,console,performance:{now:()=>now},requestAnimationFrame:f=>{frames.set(++serial,f);return serial},cancelAnimationFrame:id=>frames.delete(id),location:{search:'',hash:'',pathname:'/'},history:{replaceState(){}},localStorage:{getItem:k=>{if(blocked)throw Error('blocked');return persisted.get(k)||null},setItem:(k,v)=>{if(blocked)throw Error('blocked');persisted.set(k,v)}},document:{getElementById:el,querySelector:el,querySelectorAll:()=>[],activeElement:el('focus'),addEventListener:(k,f)=>(listeners[k]??=[]).push(f)},window:{scrollTo(){},matchMedia:()=>({matches:reduced})},setTimeout:()=>1,clearTimeout(){}});
+ const run=s=>vm.runInContext(s,context);
+ for(const name of ['world.js','whippy-ui.js','creative-review.js','game-experience.js','main-community.js','terminal-ui.js'])run(fs.readFileSync('dist/'+name,'utf8'));
+ const emit=(name,event)=>{for(const fn of listeners[name]||[])fn(event)};
+ const click=(kind,value)=>emit('click',{preventDefault(){},target:{closest:s=>s===`[data-${kind}]`?Object.assign(el('button'),{dataset:{[kind]:value}}):null}});
+ const input=(key,value)=>emit('input',{target:{dataset:{personnelField:key},value}});
+ const advance=time=>{now=time;const list=[...frames.values()];frames.clear();for(const f of list)f(now)};
+ return {run,el,click,input,advance,emit,animations,finishOpening:()=>openingResolvers.shift()?.()};
+}
+const a=boot(),page=a.el('app').innerHTML;
+assert(page.indexOf('terminal-dock')<page.indexOf('terminal-content'));
+assert.equal((page.match(/data-terminal=/g)||[]).length,5);
+const dock=a.run('terminalDock()');
+assert(!/hud-edit|draggable|notice-card|member-line|오늘|잠금/.test(dock));
+assert(!/툿|틋|답멘|멘션|부스트|북마크|팔로잉|CW|DM|HUD 편집/.test(page));
+a.click('terminal','personnel');assert(a.el('personnel-window').open);
+assert.equal(a.run('personnelPhase'),'opening');assert.equal(a.animations.length,1);assert.equal(a.animations[0].options.duration,600);a.advance(599);assert.equal(a.run('personnelPhase'),'opening');a.advance(600);a.finishOpening();await new Promise(setImmediate);assert.equal(a.run('personnelPhase'),'loading');
+assert(a.animations[0].keyframes[0].transform.includes('translate(-532.5px,34.5px)'));
+a.advance(950);assert.equal(a.el('personnel-progress').textContent,'DISPLAY SETUP');
+a.advance(1899);assert.equal(a.run('personnelPhase'),'loading');
+a.advance(1900);assert.equal(a.run('personnelPhase'),'loading');assert.equal(a.el('boot-core-status').textContent,'COMPLETE');assert.equal(a.el('boot-percent').innerHTML,'100<small>%</small>');a.advance(2499);assert.equal(a.run('personnelPhase'),'loading');a.advance(2500);assert.equal(a.run('personnelPhase'),'ready');assert(a.el('personnel-window').innerHTML.includes('인물 설명'));
+a.input('name','<img src=x onerror=alert(1)>');a.input('line','새 소개');a.input('bio','프로필 설명');
+a.emit('submit',{preventDefault(){},target:{id:'personnel-form',closest:()=>null}});
+assert.equal(a.run('people[0].line'),'새 소개');assert(!a.el('app').innerHTML.includes('<img src=x'));
+assert(a.el('app').innerHTML.includes('&lt;img src=x onerror=alert(1)&gt;'));
+assert(a.el('personnel-status').textContent.includes('저장했습니다'));
+await a.run('closePersonnel()');assert(!a.el('personnel-window').open);
+a.click('terminal','reports');assert(a.el('app').innerHTML.includes('보고로그'));assert(!a.el('app').innerHTML.includes('id="draft"'));assert(a.el('app').innerHTML.includes('새 장면 기록'));
+a.click('terminal','personnel');a.advance(2700);await a.run('closePersonnel()');a.finishOpening();await new Promise(setImmediate);a.advance(3900);assert.equal(a.run('personnelPhase'),'closed');assert(!a.el('personnel-window').open);
+const b=boot();assert.equal(b.run('people[0].line'),'새 소개');assert.equal(b.run('personnelRecords[0].bio'),'프로필 설명');
+b.click('terminal','personnel');b.finishOpening();await new Promise(setImmediate);b.advance(1300);b.advance(1900);b.input('name','');assert.equal(b.run('savePersonnel()'),false);
+b.input('name','임시 이름');await b.run('closePersonnel()');b.click('terminal','personnel');b.finishOpening();await new Promise(setImmediate);b.advance(3200);b.advance(3800);assert(b.el('personnel-window').innerHTML.includes('임시 이름'));
+b.emit('change',{target:{id:'personnel-who',value:'1'}});assert.equal(b.run('personnelWho'),1);assert(b.el('personnel-window').innerHTML.includes('서리안'));
+const c=boot({blocked:true,reduced:true});c.click('terminal','personnel');assert.equal(c.animations.length,0);c.advance(1300);c.advance(1900);c.input('name','저장 불가 인물');c.run('savePersonnel()');assert.equal(c.run('people[0].name'),'저장 불가 인물');assert(c.el('personnel-status').textContent.includes('사용할 수 없습니다'));await c.run('closePersonnel()');assert.equal(c.run('personnelPhase'),'closed');
+for(const route of ['home','members','notifications','dm','bookmarks','world']){a.run(`state().route='${route}';render()`);assert(!a.el('app').innerHTML.includes('hud-edit'));const ids=[...a.el('app').innerHTML.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size)}
+const css=fs.readFileSync('dist/terminal-ui.css','utf8');assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);assert(css.includes('prefers-reduced-motion'));assert(css.includes('@media(max-width:620px)'));
+fs.writeFileSync('validation/terminal-result.json',JSON.stringify({leftTitleOnlyDock:true,hudEditor:false,buttonOriginAnimation:true,openingDurationMs:600,loadingDurationMs:1300,completionDurationMs:600,loadingAfterExpansion:true,closeDuringLoading:true,reducedMotion:true,profilePersistence:true,profileEscaping:true,emptyNameValidation:true,storageFallback:true,reportSeparation:true,browserVisualQA:false},null,2));
+console.log('PASS: title-only left terminal, button-origin animation, 1300ms loading, cancellation, draft/reload persistence, escaping, validation, reduced motion and storage fallback. No browser visual QA.');

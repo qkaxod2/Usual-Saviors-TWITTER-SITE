@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1788534726696,
+      "tag": "0000_jazzy_salo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788545769436,
+      "tag": "0001_abandoned_miracleman",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788548712429,
+      "tag": "0002_reflective_lily_hollister",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1789484307050,
+      "tag": "0003_threaded_replies",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1789484307051,
+      "tag": "0004_mobile_push",
+      "breakpoints": true
+    }
+  ]
+}

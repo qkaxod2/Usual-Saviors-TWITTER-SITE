@@ -1,0 +1,8 @@
+.mobile-app-settings{padding:20px;border:1px solid #a8c8d333;border-radius:4px;background:#1b2030;margin:0 0 22px;min-width:0}
+.mobile-app-settings h2{font-size:1.125rem;margin:0 0 10px}
+.mobile-app-settings p{font-size:.875rem;line-height:1.8;margin:10px 0}
+.mobile-app-settings small{display:block;font-size:.8125rem;line-height:1.8;color:#b9afc7;margin:12px 0}
+.mobile-app-settings .app-download{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 13px;font-size:.875rem;text-decoration:none;max-width:100%;white-space:normal}
+.push-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.push-controls button{min-height:44px;font-size:.875rem;white-space:normal}
+.push-message{color:#bfd5d2;overflow-wrap:anywhere}
+@media(max-width:480px){.mobile-app-settings{padding:16px}}

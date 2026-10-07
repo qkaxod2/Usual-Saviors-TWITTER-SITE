@@ -1,0 +1,55 @@
+import assert from 'node:assert/strict';
+import {createHash,randomUUID} from 'node:crypto';
+import {DatabaseSync} from 'node:sqlite';
+import fs from 'node:fs';
+import {database} from '../scripts/db-adapter.mjs';
+import worker from '../server/worker.js';
+const DB=database(),n=DB.native,t=Date.now(),tokens={a:'a'.repeat(64),b:'b'.repeat(64)},env={DB};
+for(const id of ['a','b']){
+ n.prepare('INSERT INTO users VALUES(?,?,?,?,?,?,?)').run(id,id==='a'?'Nockcho':'Writer',id,'unused',id==='a'?'admin':'member','active',t);
+ n.prepare('INSERT INTO characters(id,user_id,name,created_at,updated_at) VALUES(?,?,?,?,?)').run(id,id,id,t,t);
+ n.prepare('INSERT INTO sessions VALUES(?,?,?)').run(createHash('sha256').update(tokens[id]).digest('hex'),id,t+600000);
+}
+let checks=0;
+async function call(path,{user='b',method='GET',data,key,status=200}={}){const r=await worker.fetch(new Request('https://test.example/api'+path,{method,headers:{'x-requested-with':'usual-saviors',cookie:'us_session='+tokens[user],...(data?{'content-type':'application/json'}:{}),...(key?{'idempotency-key':key}:{})},body:data?JSON.stringify(data):undefined}),env);const b=await r.json();assert.equal(r.status,status,JSON.stringify(b));checks++;return b}
+n.prepare('INSERT INTO posts VALUES(?,?,?,?,?,?)').run('root','a','a',null,'root',t-86400000*30);
+const payload={characterId:'b',parentId:'root',body:'reply'},key=randomUUID();
+n.exec("CREATE TRIGGER notification_failure BEFORE INSERT ON notifications BEGIN SELECT RAISE(FAIL,'simulated notification failure'); END");
+await call('/posts',{method:'POST',data:payload,key,status:500});
+assert.equal(n.prepare("SELECT COUNT(*) n FROM posts WHERE parent_id='root'").get().n,0);
+assert.equal(n.prepare('SELECT COUNT(*) n FROM receipts').get().n,0);
+n.exec('DROP TRIGGER notification_failure');
+const first=await call('/posts',{method:'POST',data:payload,key,status:201});
+assert.deepEqual(await call('/posts',{method:'POST',data:payload,key,status:201}),first);
+assert.equal(n.prepare("SELECT COUNT(*) n FROM posts WHERE parent_id='root'").get().n,1);
+await call('/posts',{method:'POST',data:{...payload,body:'different'},key,status:409});
+let alerts=await call('/notifications',{user:'a'});assert.equal(alerts.items[0].target_id,'root');assert.equal(alerts.unread,1);
+assert.equal((await call('/posts/root')).item.replies[0].id,first.id);
+await call('/posts/'+first.id,{method:'PATCH',data:{body:'updated'}});
+assert.equal((await call('/notifications',{user:'a'})).items[0].body,'updated');
+n.exec("UPDATE users SET status='suspended' WHERE id='b'");
+assert.equal((await call('/notifications',{user:'a'})).unread,0);
+n.exec("UPDATE users SET status='active' WHERE id='b'");
+await call('/posts/'+first.id,{method:'DELETE'});
+assert.equal((await call('/notifications',{user:'a'})).items.length,0);
+const scene=await call('/actions',{user:'a',method:'POST',data:{characterId:'a',day:'2026-08-01',place:'복도',at:'14:03',body:'서 있음'},status:201});
+const actionData={characterId:'b',sceneId:scene.sceneId,at:'14:05',body:'다가옴'},actionKey=randomUUID();
+const action=await call('/actions',{method:'POST',data:actionData,key:actionKey,status:201});
+assert.deepEqual(await call('/actions',{method:'POST',data:actionData,key:actionKey,status:201}),action);
+alerts=await call('/notifications',{user:'a'});assert.equal(alerts.items[0].target_day,'2026-08-01');assert.equal(alerts.items[0].target_id,scene.sceneId);
+await call('/actions/'+action.id,{method:'DELETE'});assert.equal((await call('/notifications',{user:'a'})).unread,0);
+const charKey=randomUUID(),charData={name:'retry character'},character=await call('/characters',{method:'POST',data:charData,key:charKey,status:201});
+assert.deepEqual(await call('/characters',{method:'POST',data:charData,key:charKey,status:201}),character);
+const noticeKey=randomUUID(),noticeData={title:'test',body:'test'};
+const notice=await call('/notices',{user:'a',method:'POST',data:noticeData,key:noticeKey});
+assert.deepEqual(await call('/notices',{user:'a',method:'POST',data:noticeData,key:noticeKey}),notice);
+assert.equal((await call('/notifications')).items.filter(x=>x.type==='notice').length,1);
+await call('/notices/'+notice.id,{user:'a',method:'DELETE'});assert.equal((await call('/notifications')).items.length,0);
+// Upgrade an existing schema with content: no rebuilding or resetting user data.
+const legacy=new DatabaseSync(':memory:');legacy.exec('PRAGMA foreign_keys=ON');
+for(const name of ['0000_jazzy_salo.sql','0001_abandoned_miracleman.sql'])legacy.exec(fs.readFileSync('drizzle/'+name,'utf8'));
+legacy.prepare('INSERT INTO users VALUES(?,?,?,?,?,?,?)').run('old','old','old','unused','member','active',t);
+legacy.prepare('INSERT INTO notifications VALUES(?,?,?,?,?,?,?,?)').run('legacy','old','reply','old title','old body','home',null,t);
+legacy.exec(fs.readFileSync('drizzle/0002_reflective_lily_hollister.sql','utf8'));
+assert.equal(legacy.prepare('SELECT COUNT(*) n FROM users').get().n,1);assert.equal(legacy.prepare('SELECT COUNT(*) n FROM notifications').get().n,1);
+legacy.close();n.close();console.log(`${checks} reliability API checks passed; atomic rollback, replay, current targets, deletion, suspension and migration preservation verified.`);

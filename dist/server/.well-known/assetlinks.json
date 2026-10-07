@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.usualsaviors.app",
+      "sha256_cert_fingerprints": [
+        "43:13:1F:8B:20:98:C7:45:BE:A8:F3:6D:9A:FF:04:1E:1A:E2:12:33:FE:0B:C4:B0:55:90:AF:FB:F8:26:54:14"
+      ]
+    }
+  }
+]

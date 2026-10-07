@@ -1,0 +1,39 @@
+.afterhours-ui .report-toolbar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px; }
+.afterhours-ui .report-count { display:flex; align-items:baseline; flex-wrap:wrap; gap:6px 12px; margin:0; }
+.afterhours-ui .report-count b { font-size:1rem; color:#e1d9e9; font-weight:500; }
+.afterhours-ui .report-count span { font-size:.8125rem; color:#a99db8; }
+.afterhours-ui .report-toolbar > button { min-height:40px; flex:none; }
+.afterhours-ui .report-filters { padding:18px; margin:0 0 18px; background:#1b2232; border:1px solid #b4c8d332; border-radius:4px; }
+.afterhours-ui .report-filters[hidden] { display:none; }
+.afterhours-ui .report-filter-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.afterhours-ui .report-filter-fields label { display:grid; gap:6px; min-width:0; font-size:.875rem; color:#c2b5cf; }
+.afterhours-ui .report-filter-fields :is(input,select) { width:100%; min-width:0; max-width:100%; padding:9px 10px; font-size:1rem; }
+.afterhours-ui .report-filters footer { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0 0; background:none; border:0; }
+.afterhours-ui .report-filters .quiet-button { font-size:.875rem; }
+.afterhours-ui .report-filters .form-error:empty { display:none; }
+.afterhours-ui .report-active-filters { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:0 0 18px; font-size:.8125rem; }
+.afterhours-ui .report-active-filters > span { padding:4px 8px; border:1px solid #a4c7cd35; background:#233b454f; border-radius:3px; overflow-wrap:anywhere; }
+.afterhours-ui .report-active-filters .quiet-button { font-size:.8125rem; padding:5px; }
+.afterhours-ui .report-panel > .report-help-inline { margin:0 0 20px; }
+.afterhours-ui .report-new-fields { grid-template-columns:1.1fr .8fr 1.3fr; }
+.afterhours-ui #report-results { scroll-margin-top:24px; outline:none; }
+.afterhours-ui .report-pagination { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; margin:24px 0 0; padding:20px 0 0; border-top:1px solid #b8c3db25; }
+.afterhours-ui .report-page-numbers { display:flex; gap:4px; }
+.afterhours-ui .report-pagination button { min-width:36px; min-height:40px; padding:7px 10px; font-size:.875rem; }
+.afterhours-ui .report-page { background:none; border:1px solid transparent; border-radius:3px; color:#b9afca; }
+.afterhours-ui .report-page[aria-current=page] { color:#d9eee7; border-color:#a8cdc96b; background:#a9d7d21b; }
+.afterhours-ui .report-pagination button:disabled { opacity:.35; cursor:default; }
+.afterhours-ui .report-pagination small { flex-basis:100%; text-align:center; font-size:.75rem; color:#9e92af; }
+@media(max-width:480px) {
+ .afterhours-ui .report-filters { padding:14px; }
+ .afterhours-ui .report-filter-fields { gap:12px 10px; }
+ .afterhours-ui .report-new-fields { grid-template-columns:1fr 1fr; }
+ .afterhours-ui .report-new-fields > label:last-child { grid-column:1/-1; }
+ .afterhours-ui .report-pagination { gap:5px; }
+ .afterhours-ui .report-pagination button { min-width:32px; padding:6px 7px; }
+ .afterhours-ui .report-page-numbers { gap:2px; }
+}
+@media(max-width:360px) {
+ .afterhours-ui .report-filter-fields { grid-template-columns:minmax(0,1fr); }
+ .afterhours-ui .report-pagination button { min-width:29px; padding:6px; }
+}
