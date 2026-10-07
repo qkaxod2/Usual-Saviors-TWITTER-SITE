@@ -463,3 +463,17 @@ body:before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
   :is(#us,:root) .thread-window-body .chat-out>:is(.post-top,.post-body,.chat-time,.reply-context,.thread-actions){margin-left:auto;margin-right:64px}
   :is(#us,:root) .thread-window-body .chat-message>.post-body{max-width:calc(100% - 64px)}
 }
+/* A run of messages from one character reads as one block: the bubbles sit close together,
+   the time shows under the last one, and the reply line ("ㄴ …에게 답글") is dropped inside the run. */
+:is(#us,:root) .thread-window-body .chat-cont{padding-top:6px!important}
+:is(#us,:root) .thread-window-body .chat-cont>.reply-context{display:none}
+:is(#us,:root) .thread-window-body .chat-cont>.post-body{margin-top:0}
+:is(#us,:root) .thread-window-body .chat-message:has(+.chat-cont)>.chat-time{display:none}
+@media(hover:hover) and (min-width:600px){
+  /* inside a run, the reply/edit/delete row floats beside the bubble on hover instead of taking a line */
+  :is(#us,:root) .thread-window-body .chat-message:has(+.chat-cont)>.thread-actions{position:absolute;bottom:4px;right:0;min-height:0;margin:0}
+  :is(#us,:root) .thread-window-body .chat-out:has(+.chat-cont)>.thread-actions{right:auto;left:0}
+}
+@media(hover:none),(max-width:599px){
+  :is(#us,:root) .thread-window-body .chat-message:has(+.chat-cont)>.thread-actions{min-height:0;margin-top:2px}
+}
