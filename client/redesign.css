@@ -477,3 +477,68 @@ body:before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 @media(hover:none),(max-width:599px){
   :is(#us,:root) .thread-window-body .chat-message:has(+.chat-cont)>.thread-actions{min-height:0;margin-top:2px}
 }
+
+/* =====================================================================
+   ART SLOTS
+   Drop-in images. The SVGs in public/art are placeholders; a generated picture can replace any of them
+   by changing the url here (see design-review/redesign/이미지-프롬프트.md for prompts and sizes).
+   ===================================================================== */
+:root{
+  --art-skyline:url('/art/skyline.svg');     /* night city along the bottom of the page, 2400x520, dark top edge */
+  --art-emblem:url('/art/emblem.svg');       /* shown where no character is selected (visitor, admin) */
+  --art-silhouette:url('/art/silhouette.svg'); /* behind the initial of characters without a picture */
+}
+/* the skyline is the top layer of the page backdrop (.afterhours-ui:after) */
+:is(#us,:root) .afterhours-ui:after{background:var(--art-skyline) center bottom/max(100%,1600px) auto no-repeat,radial-gradient(ellipse 60% 45% at 78% 0%,#1d7b7470,transparent 70%),radial-gradient(ellipse 50% 50% at 8% 30%,#47328060,transparent 70%),radial-gradient(ellipse 70% 40% at 50% 110%,#0f4a5a40,transparent 70%),var(--r-ink)}
+:is(#us,:root) .afterhours-ui .empty-portrait{font-size:0;color:transparent;background:radial-gradient(circle at 50% 45%,#7fe0cc26,transparent 60%),var(--art-emblem) center 42%/58% auto no-repeat,linear-gradient(#93c3d012 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,#93c3d012 1px,transparent 1px) 0 0/22px 22px,linear-gradient(165deg,#17262e,#0b111a)}
+:is(#us,:root) .afterhours-ui .character-stage:has(.empty-portrait) .portrait-letter{font-size:22px;letter-spacing:.3em;font-family:var(--r-hud);opacity:.7}
+:is(#us,:root) :is(.portrait-plane .placeholder-avatar,.character-card .placeholder-avatar,dialog .public-profile>.placeholder-avatar,.thread-window-body .chat-message>.post-top .placeholder-avatar){
+  background:var(--art-silhouette) center bottom/86% auto no-repeat,radial-gradient(circle at 50% 40%,hsl(var(--hue) 70% 55% / .35),transparent 55%),linear-gradient(hsl(var(--hue) 60% 70% / .07) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,hsl(var(--hue) 60% 70% / .07) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(165deg,hsl(var(--hue) 35% 16%),#0b111a)}
+
+/* =====================================================================
+   ROUND 1 FIXES
+   ===================================================================== */
+/* 인사기록 window and its boot screen were still on the old square navy */
+:is(#us,:root) dialog#personnel-window{border-radius:20px;overflow:hidden}
+:is(#us,:root) dialog#personnel-window .personnel-header{background:linear-gradient(90deg,#0f2a2a,#111a28 60%);border-bottom:1px solid #7fe0cc33}
+:is(#us,:root) dialog#personnel-window .personnel-header h1{font:400 22px var(--r-kr);color:#f0faf7}
+:is(#us,:root) dialog#personnel-window .personnel-header .eyebrow{font-family:var(--r-hud);color:#7fe0cc}
+:is(#us,:root) dialog#personnel-window.personnel-booting{background:radial-gradient(ellipse 70% 50% at 50% 30%,#1d6b6a33,transparent 70%),#0b1019}
+:is(#us,:root) dialog#personnel-window .personnel-overview,:is(#us,:root) dialog#personnel-window .personnel-card{border-radius:16px;border:1px solid #9fe3d426;background:linear-gradient(165deg,#141e2cee,#0d141fee)}
+:is(#us,:root) dialog .personnel-card>.portrait-button{border-radius:14px;overflow:hidden}
+:is(#us,:root) dialog .character-photo{border-radius:14px;border:1px dashed #7fe0cc40;padding:12px;background:#0b111a}
+:is(#us,:root) dialog .character-photo .avatar{border-radius:12px}
+:is(#us,:root) dialog .character-photo .placeholder-avatar{background:var(--art-silhouette) center bottom/80% auto no-repeat,linear-gradient(165deg,#17323a,#0b111a);color:transparent}
+/* danger actions */
+:is(#us,:root) dialog :is(.danger,.danger-button){border-radius:999px;border:1px solid #ff8fa3;background:linear-gradient(100deg,#d9566e,#b8435c);color:#fff;box-shadow:0 6px 22px -8px #ff6b8acc}
+:is(#us,:root) dialog :is(.danger,.danger-button):hover{background:linear-gradient(100deg,#e86a80,#c95069)}
+:is(#us,:root) dialog .danger-link{color:#ff9fb1}
+/* admin room */
+:is(#us,:root) .afterhours-ui .admin-stats>div{border-radius:14px;border:1px solid #9fe3d426;background:linear-gradient(165deg,#13202bee,#0d141fee);box-shadow:inset 0 1px 0 #ffffff08}
+:is(#us,:root) .afterhours-ui .admin-stats>div b,:is(#us,:root) .afterhours-ui .admin-stats>div strong{font-family:var(--r-hud);color:#c7eee5;font-weight:500}
+:is(#us,:root) .afterhours-ui .admin-panel table{border-collapse:separate;border-spacing:0;border:1px solid #9fe3d41f;border-radius:14px;overflow:hidden}
+:is(#us,:root) .afterhours-ui .admin-panel th{background:#0f1a24;color:#7fe0cc;font:500 11px var(--r-hud);letter-spacing:.1em}
+:is(#us,:root) .afterhours-ui .admin-panel td{border-color:#9fe3d414}
+/* small labels */
+:is(#us,:root) .afterhours-ui .badge{border-radius:999px;border:1px solid #f2b86680;color:#f2b866;background:#f2b8661a;font-family:var(--r-hud);letter-spacing:.06em}
+
+/* =====================================================================
+   ROUND 2
+   ===================================================================== */
+/* Large portraits already carry the name below, so the initial on the silhouette is dropped */
+:is(#us,:root) :is(.portrait-plane .placeholder-avatar,.character-card .placeholder-avatar,dialog .public-profile>.placeholder-avatar){font-size:0!important;color:transparent}
+/* A post that was just sent lights up once, so posting has a visible answer */
+:is(#us,:root) .afterhours-ui .server-post.just-sent{border-color:#7fe0cc;box-shadow:0 0 0 3px #7fe0cc26,0 0 40px -8px #7fe0cc99}
+:is(#us,:root) .afterhours-ui .server-post:not(.reply-post).just-sent:after{content:'TRANSMITTED ✓';color:#7fe0cc}
+@media (prefers-reduced-motion:no-preference){
+  :root:not([data-reduced-motion=true]) .afterhours-ui .server-post.just-sent{animation:r-sent 1.6s var(--t-ease) both}
+}
+@keyframes r-sent{0%{opacity:0;transform:translateY(-14px) scale(.98);filter:brightness(1.8)}25%{opacity:1;transform:none}100%{filter:none;box-shadow:0 0 0 0 #7fe0cc00,0 24px 50px -34px #000;border-color:#9fe3d433}}
+
+/* =====================================================================
+   ROUND 3
+   ===================================================================== */
+:is(#us,:root) .thread-reply-target button{border-radius:999px;border:1px solid #7fe0cc40;background:#7fe0cc0d;color:#c7eee5;padding:6px 14px}
+:is(#us,:root) .thread-reply-target button:hover{background:#7fe0cc1f;border-color:#7fe0cc80}
+/* keep the sidebar footnote readable where it meets the skyline */
+.afterhours-ui .sidebar-foot{text-shadow:0 0 8px #070a12,0 0 2px #070a12}
